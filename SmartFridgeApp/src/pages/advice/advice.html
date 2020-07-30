@@ -1,0 +1,78 @@
+<!--
+  Generated template for the AdvicePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-buttons left> 
+      <button class="navbar-button" (click)="openSettings()"> 
+        <ion-icon name="settings" class="navbar-icon"></ion-icon>
+      </button> 
+    </ion-buttons> 
+    <ion-title>{{title | uppercase}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list style="padding-top: 20px;">
+      <ion-card class="myCard" style="border-radius: 5px; margin-top: 20px;" (click)="launchFacialEmotionRecognition($event)">
+        <img style="background-position: center center;background-repeat: no-repeat;width:100%;height:200px; object-fit: cover" src="/assets/imgs/what_to_eat.png"/>
+        <div class="myOverlay">
+          <div class="card-title" style="text-align: left; color: black; font-size: 17px;"text-color="black">What should I eat today?</div>
+        </div>      
+    </ion-card>
+  <ion-item-divider style="margin-top: 5px;">
+  </ion-item-divider>
+    <p style="font-size: 16px;text-align: center; margin-top: 25px;">EMOTION-SPECIFIC FOOD RECOMMENDATIONS</p>
+
+    <div style="margin-top:20px;" class="row">
+     
+      <ion-list class="column" style="margin: 0px; padding: 0px; background: transparent;">
+          <ion-card class="myCard" style="background-color: #f4cb5c;" (click)="happy($event)">
+            <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/happy.png" />
+               <div class="card-title" style="background-color: #f4cb5c;" text-wrap>HAPPY</div>
+          </ion-card>
+          <ion-card class="myCard" style="background-color: #f2bd7f; margin-top: 20px !important;">
+            <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/scared.png" />
+               <div class="card-title" style="background-color: #f2bd7f;" text-wrap>SCARED</div>
+          </ion-card>
+      </ion-list>
+
+      <ion-list class="column" style="margin: 0px; padding: 0px; background: transparent;margin-left: 20px; margin-right: 20px;">
+          <ion-card class="myCard" style="background-color: #e78e47;">
+            <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/sad.png" />
+               <div class="card-title" style="background-color: #e78e47;" text-wrap>SAD</div>
+          </ion-card>
+          <ion-card class="myCard" style="background-color: #e48861; margin-top: 20px !important;">
+            <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/stressed.png" />
+               <div class="card-title" style="background-color: #e48861;" text-wrap>STRESSED</div>
+          </ion-card>
+      </ion-list>
+
+      <ion-list class="column" style="margin: 0px; padding: 0px; background: transparent; margin-right: 20px;">
+          <ion-card class="myCard" style="background-color: #e78e47;">
+            <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/angry.png"/>
+               <div class="card-title" style="background-color: #e78e47;" text-wrap>ANGRY</div>
+          </ion-card>
+          <ion-card class="myCard" style="background-color: #e78e47; margin-top: 20px !important;">
+            <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/bored.png" />
+               <div class="card-title" style="background-color: #e78e47;" text-wrap>BORED</div>
+          </ion-card>
+      </ion-list>
+      <ion-list class="column" style="margin: 0px; padding: 0px; background: transparent;">
+        <ion-card class="myCard" style="background-color: #f6daab;">
+          <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/disgusted.png"/>
+             <div class="card-title" style="background-color: #f6daab;" text-wrap>DISGUSTED</div>
+        </ion-card>
+        <ion-card class="myCard" style="background-color: #e78e47; margin-top: 20px !important;">
+          <img background-position= 'center center' background-repeat= 'no-repeat' src="/assets/imgs/distressed.png" />
+             <div class="card-title" style="background-color: #e78e47;" text-wrap>DISTRESSED</div>
+        </ion-card>
+    </ion-list>
+
+    </div>
+
+  </ion-list>
+</ion-content>
