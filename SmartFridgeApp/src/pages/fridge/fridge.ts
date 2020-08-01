@@ -3,6 +3,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { SignUpLogInPage } from '../signuplogin/signuplogin';
+import { AddFoodToFridgePage } from '../add-food-to-fridge/add-food-to-fridge';
+import { AddToGroceryListPage } from '../add-to-grocery-list/add-to-grocery-list';
 ​
 /**
  * Generated class for the FridgePage page.
@@ -69,6 +71,14 @@ export class FridgePage {
         });
       }
     });
+  }
+
+  addFridgeItem(){
+    this.navCtrl.push(AddFoodToFridgePage, {});
+  }
+
+  addGroceryListItem(){
+    this.navCtrl.push(AddToGroceryListPage, {});
   }
 
 }

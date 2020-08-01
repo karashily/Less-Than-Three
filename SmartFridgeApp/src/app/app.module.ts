@@ -25,6 +25,8 @@ import { SignUpPage } from '../pages/signup/signup';
 import { LogInPage } from '../pages/login/login';
 import { ForgotPasswordPage } from '../pages/forgot-password/forgot-password';
 import { AddFoodToFridgePage } from '../pages/add-food-to-fridge/add-food-to-fridge';
+import { FoodNutrientsProvider } from '../providers/food-nutrients/food-nutrients';
+import { AddToGroceryListPage } from '../pages/add-to-grocery-list/add-to-grocery-list';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { AddFoodToFridgePage } from '../pages/add-food-to-fridge/add-food-to-fri
     SignUpPage,
     LogInPage,
     ForgotPasswordPage,
-    AddFoodToFridgePage
+    AddFoodToFridgePage,
+    AddToGroceryListPage
   ],
   imports: [
     BrowserModule,
@@ -64,13 +67,16 @@ import { AddFoodToFridgePage } from '../pages/add-food-to-fridge/add-food-to-fri
     SignUpLogInPage,
     SignUpPage,
     LogInPage,
-    ForgotPasswordPage
+    ForgotPasswordPage,
+    AddFoodToFridgePage,
+    AddToGroceryListPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    FirebaseAuthServiceProvider
+    FirebaseAuthServiceProvider,
+    FoodNutrientsProvider
   ]
 })
 export class AppModule {}

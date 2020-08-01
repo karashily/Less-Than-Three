@@ -6,7 +6,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Food } from '../../objects/food';
 /**
- * Generated class for the AddFoodToFridgePage page.
+ * Generated class for the AddToGroceryListPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -14,10 +14,10 @@ import { Food } from '../../objects/food';
 
 @IonicPage()
 @Component({
-  selector: 'page-add-food-to-fridge',
-  templateUrl: 'add-food-to-fridge.html',
+  selector: 'page-add-to-grocery-list',
+  templateUrl: 'add-to-grocery-list.html',
 })
-export class AddFoodToFridgePage {
+export class AddToGroceryListPage {
 
   foodNutrition: any=[];
 
@@ -35,7 +35,7 @@ export class AddFoodToFridgePage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad AddFoodToFridgePage');
+    console.log('ionViewDidLoad AddToGroceryListPage');
   }
 
   async filterList(evt) {
@@ -62,7 +62,7 @@ export class AddFoodToFridgePage {
   async addFoodItem(food){
     let alert = this.alertCtrl.create({
       title: 'Add Food',
-      message: 'Would you like to add '+food.Ingredient_Name+' to your fridge food list?',
+      message: 'Would you like to add '+food.Ingredient_Name+' to your grocery list?',
       buttons: [
         {
           text: 'Cancel',
@@ -77,12 +77,12 @@ export class AddFoodToFridgePage {
             this.auth.authState.subscribe(user => {
               if (user) {
                 let userId = user.uid
-                let fridge = this.firestore.doc<any>('users/' + userId).collection('fridge');
-                this.firestore.firestore.doc('/users/'+userId+'/fridge/'+food.Ingredient_Code).get().then(docSnapshot => {
+                let groceryList = this.firestore.doc<any>('users/' + userId).collection('groceryList');
+                this.firestore.firestore.doc('/users/'+userId+'/groceryList/'+food.Ingredient_Code).get().then(docSnapshot => {
                   if (docSnapshot.exists) {
                     let data=docSnapshot.data();
                     let quantity=data.quantity+1;
-                    fridge.doc(food.Ingredient_Code).set({
+                    groceryList.doc(food.Ingredient_Code).set({
                       ingredientCode: food.Ingredient_Code,
                       foodName: food.Ingredient_Name,
                       quantity: quantity
@@ -90,7 +90,7 @@ export class AddFoodToFridgePage {
                       this.navCtrl.pop();
                     }); 
                   } else {
-                    fridge.doc(food.Ingredient_Code).set({
+                    groceryList.doc(food.Ingredient_Code).set({
                       ingredientCode: food.Ingredient_Code,
                       foodName: food.Ingredient_Name,
                       quantity: 1

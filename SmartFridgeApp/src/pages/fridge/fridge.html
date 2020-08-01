@@ -19,11 +19,9 @@
       </div>
       <ion-list>
         <ion-item *ngFor="let food of firestoreFridgeList | async">
-            {{food.foodName}}
+            {{food.quantity}} {{food.foodName}}
         </ion-item>
       </ion-list>
-      <div class="divider"></div>
-      <button *ngIf="hideSeeAllFridgeButton==false" ion-button id="seeAllButton" style="box-shadow: none; font-size: 17px; background-color: transparent;" class="other-buttons" (click)="seeAllFridgeItems()">SEE ALL</button>
     </ion-card>
 
       <ion-card class="myCard" style="margin-top: 30px;"> 
@@ -33,13 +31,9 @@
         </div>
         <ion-list *ngIf="noGroceryList==false">
           <ion-item *ngFor="let food of groceryList | async">
-              {{food.foodName}}
+              <p style="color: black; font-size: 16px;display: inline;">{{food.quantity}} {{food.foodName}}</p>
           </ion-item>
         </ion-list>
         <p *ngIf="noGroceryList==true" style="margin-top: 10px; margin-left: 20px; margin-right: 20px; margin-bottom: 15px; font-size: 17px;">Add new items to your grocery list!</p>
-        <div class="divider"></div>
-        <button *ngIf="hideSeeAllGroceryListButton==false" ion-button style="box-shadow: none; font-size: 17px; background-color: transparent;" class="other-buttons" (click)="seeAllFridgeItems()">SEE ALL</button>
       </ion-card>
-  
-  
   </ion-content>
