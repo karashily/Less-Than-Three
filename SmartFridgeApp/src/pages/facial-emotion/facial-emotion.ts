@@ -27,7 +27,7 @@ JSSDK.Assets = {
 })
 export class FacialEmotionPage {
 
-  detector: any;
+  detector1: any;
   
   @ViewChild(Navbar) navBar: Navbar;
 
@@ -38,106 +38,113 @@ export class FacialEmotionPage {
     var height = 480;
     var faceMode = affdex.FaceDetectorMode.LARGE_FACES;
 
-    this.detector = new affdex.CameraDetector(divRoot, width, height, faceMode);
+    this.detector1 = new affdex.CameraDetector(divRoot, width, height, faceMode);
 
-    this.detector.detectAllEmotions();
-    this.detector.detectAllExpressions();
-    this.detector.detectAllEmojis();
-    this.detector.detectAllAppearance();
+    this.detector1.detectAllEmotions();
 
-    this.detector.addEventListener("onInitializeSuccess", function() {
-      this.log('#logs', "The detector reports initialized");
-      //Display canvas instead of video feed because we want to draw the feature points on it
-      document.querySelector("#face_video_canvas").setAttribute("style", "display: block;");
-      document.querySelector("#face_video").setAttribute("style", "display: none;");
+    this.detector1.addEventListener("onInitializeSuccess", function() {
+      console.log("The detector reports initialized");
     });
 
-    this.detector.addEventListener("onWebcamConnectSuccess", function() {
-      this.log('#logs', "Webcam access allowed");
+    this.detector1.addEventListener("onWebcamConnectSuccess", function() {
+      console.log("Webcam access allowed");
     });
     
     //Add a callback to notify when camera access is denied
-    this.detector.addEventListener("onWebcamConnectFailure", function() {
-      this.log('#logs', "webcam denied");
+    this.detector1.addEventListener("onWebcamConnectFailure", function() {
       console.log("Webcam access denied");
+      document.querySelector("#one").innerHTML="Please enable your camera access.";
+      document.querySelector("#two").innerHTML="";
     });
 
-    this.detector.addEventListener("onStopSuccess", function() {
-      this.log('#logs', "The detector reports stopped");
-      document.querySelector("#results").innerHTML = "";
+    this.detector1.addEventListener("onStopSuccess", function() {
+      console.log("The detector reports stopped");
     });
 
-    this.detector.addEventListener("onImageResultsSuccess", function(faces, image, timestamp) {
-      document.querySelector('#results').innerHTML = "";
-      this.log('#results', "Timestamp: " + timestamp.toFixed(2));
-      this.log('#results', "Number of faces found: " + faces.length);
+    this.detector1.addEventListener("onImageResultsSuccess", function(faces, image, timestamp) {
       if (faces.length > 0) {
-        this.log('#results', "Appearance: " + JSON.stringify(faces[0].appearance));
-        this.log('#results', "Emotions: " + JSON.stringify(faces[0].emotions, function(key, val) {
-          return val.toFixed ? Number(val.toFixed(0)) : val;
-        }));
-        this.log('#results', "Expressions: " + JSON.stringify(faces[0].expressions, function(key, val) {
-          return val.toFixed ? Number(val.toFixed(0)) : val;
-        }));
-        this.log('#results', "Emoji: " + faces[0].emojis.dominantEmoji);
-        if(document.querySelector('#face_video_canvas') != null)
-        this.drawFeaturePoints(image, faces[0].featurePoints);
-      }
-    
-      setTimeout(this.detector.captureNextImage, 150);
-    });
-  }
+        var emotionsJSON=faces[0].emotions;
+        let joy=emotionsJSON.joy;
+        let sadness=emotionsJSON.sadness;
+        let disgust=emotionsJSON.disgust-30;
+        let contempt=emotionsJSON.contempt;
+        let anger=emotionsJSON.anger;
+        let fear=emotionsJSON.fear;
+        let surprise=emotionsJSON.surprise;
+        let emotions=[
+          {
+            name:"joy", 
+            number:joy
+          }, {
+            name:"sadness", 
+            number:sadness
+          }, {
+            name:"disgust", 
+            number:disgust
+          }, {
+            name:"contempt", 
+            number:contempt
+          }, {
+            name:"anger", 
+            number:anger
+          }, {
+            name:"fear", 
+            number:fear
+          }, {
+            name:"surprise", 
+            number:surprise
+          }];
+        let maxEmotionNumber=Math.max.apply(Math, emotions.map(function(o) { return o.number; }));
+        let maxEmotion=emotions[emotions.findIndex(x => x.number ===maxEmotionNumber)].name
 
-  drawFeaturePoints(img, featurePoints) {
-    var contxt = document.querySelector('#face_video_canvas')[0].getContext('2d');
-  
-    var hRatio = contxt.canvas.width / img.width;
-    var vRatio = contxt.canvas.height / img.height;
-    var ratio = Math.min(hRatio, vRatio);
-  
-    contxt.strokeStyle = "#FFFFFF";
-    for (var id in featurePoints) {
-      contxt.beginPath();
-      contxt.arc(featurePoints[id].x,
-        featurePoints[id].y, 2, 0, 2 * Math.PI);
-      contxt.stroke();
-    }
+        if (emotionsJSON.engagement<0.08){
+          document.querySelector('#one').innerHTML = "<span>Are you feeling bored?</span><br />";
+        }else{
+          document.querySelector('#one').innerHTML = "<span>Are you feeling " +maxEmotion + "?</span><br />";
+        }
+        document.querySelector("#two").innerHTML="";
+      } else{
+        document.querySelector("#one").innerHTML="No faces found!";
+        document.querySelector("#two").innerHTML="";
+      }
+    });
+
+    this.onStart();
   }
 
    onStart() {
-    if (this.detector && !this.detector.isRunning) {
-      document.querySelector("#logs").innerHTML = "";
-      this.detector.start(JSSDK.Assets.wasm);
+    if (this.detector1 && !this.detector1.isRunning) {
+      this.detector1.start(JSSDK.Assets.wasm);
     }
-    this.log('#logs', "Clicked the start button");
+    console.log("Clicked the start button");
   }
   
   //function executes when the Stop button is pushed.
   onStop() {
-    this.log('#logs', "Clicked the stop button");
-    if (this.detector && this.detector.isRunning) {
-      this.detector.removeEventListener();
-      this.detector.stop();
+    console.log("Clicked the stop button");
+    if (this.detector1 && this.detector1.isRunning) {
+      this.detector1.removeEventListener();
+      this.detector1.stop();
     }
   };
   
   //function executes when the Reset button is pushed.
   onReset() {
-    this.log('#logs', "Clicked the reset button");
-    if (this.detector && this.detector.isRunning) {
-      this.detector.reset();
+    console.log("Clicked the reset button");
+    if (this.detector1 && this.detector1.isRunning) {
+      this.detector1.reset();
   
       document.querySelector('#results').innerHTML = "";
     }
   };
-
-  log(node_name, msg) {
-    document.querySelector(node_name).innerHTML += "<span>" + msg + "</span><br />";
-  }
   
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad FacialEmotionPage');
+  }
+
+  ionViewDidLeave(){
+    this.onStop();
   }
 
   setBackButtonAction(){

@@ -21,6 +21,24 @@ page-advice {
       border-radius: 10px;
     }
 
+    .myCardEmotion{
+      position:relative;
+      height: auto;
+      width: 100%;
+      margin: 0px !important;
+      border-radius: 10px;
+      height: 40px;
+      
+    }
+
+    .emotion{
+      height: 30px;
+      width: 30px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 5px;
+    }
   
     .myOverlay{
         width: 100%;
@@ -41,7 +59,7 @@ page-advice {
     }
     .column {
       float: left;
-      width: 21%;
+      width: 47.5%;
     }
     /* Clear floats after the columns */
     .row:after {

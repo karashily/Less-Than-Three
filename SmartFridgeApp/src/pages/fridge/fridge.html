@@ -6,33 +6,40 @@
 -->
 <ion-header>
   <ion-navbar>
-    <ion-buttons left> 
-      <button class="navbar-button" (click)="openSettings()"> 
-        <ion-icon name="settings" class="navbar-icon"></ion-icon>
-      </button> 
-    </ion-buttons> 
     <ion-title>{{title | uppercase}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
 
-  <ion-card class="myCard"> 
-        <img background-position= 'center center' background-repeat= 'no-repeat' style="object-fit: cover;"/>
-        <div style="background-color: #af003e; text-align: center; color: white; padding: 10px; font-size: 17px;">What's in my fridge?</div>
-        <ion-list>
-          <div>
+    <ion-card class="myCard"> 
+      <div style="background-color: #fc7a4a; height: 45px; position: relative;">
+        <ion-icon (click)="addFridgeItem()" name="add" color="whiteColor" style="font-size:23px; display: inline-block; *display: inline; zoom: 1; position: absolute; right: 0px; margin-right: 10px; padding: 10px;"></ion-icon>
+        <p style="display: inline-block; *display: inline; zoom: 1; color: white; font-size: 17px; position: relative; top: 10px; margin-left: 20px;">What's in my fridge?</p> 
+      </div>
+      <ion-list>
+        <ion-item *ngFor="let food of firestoreFridgeList | async">
+            {{food.foodName}}
+        </ion-item>
+      </ion-list>
+      <div class="divider"></div>
+      <button *ngIf="hideSeeAllFridgeButton==false" ion-button id="seeAllButton" style="box-shadow: none; font-size: 17px; background-color: transparent;" class="other-buttons" (click)="seeAllFridgeItems()">SEE ALL</button>
+    </ion-card>
+
+      <ion-card class="myCard" style="margin-top: 30px;"> 
+        <div style="background-color: #ff975f; height: 45px; position: relative;">
+          <ion-icon (click)="addGroceryListItem()" name="add" color="whiteColor" style="font-size:23px; display: inline-block; *display: inline; zoom: 1; position: absolute; right: 0px; margin-right: 10px; padding: 10px;"></ion-icon>
+          <p style="display: inline-block; *display: inline; zoom: 1; color: white; font-size: 17px; position: relative; top: 10px; margin-left: 20px;">My Grocery List</p> 
         </div>
+        <ion-list *ngIf="noGroceryList==false">
+          <ion-item *ngFor="let food of groceryList | async">
+              {{food.foodName}}
+          </ion-item>
         </ion-list>
+        <p *ngIf="noGroceryList==true" style="margin-top: 10px; margin-left: 20px; margin-right: 20px; margin-bottom: 15px; font-size: 17px;">Add new items to your grocery list!</p>
+        <div class="divider"></div>
+        <button *ngIf="hideSeeAllGroceryListButton==false" ion-button style="box-shadow: none; font-size: 17px; background-color: transparent;" class="other-buttons" (click)="seeAllFridgeItems()">SEE ALL</button>
       </ion-card>
-
-      <ion-card class="myCard"> 
-        <img background-position= 'center center' background-repeat= 'no-repeat' style="object-fit: cover;"/>
-        <div style="background-color: #af003e; text-align: center; color: white; padding: 10px; font-size: 17px;">My Grocery List</div>
-        <ion-list>
-          <div>
-         </div>
-        </ion-list>
-      </ion-card>
-
-</ion-content>
+  
+  
+  </ion-content>

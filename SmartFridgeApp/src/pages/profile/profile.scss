@@ -19,13 +19,15 @@ page-profile {
             padding: 1% 3.5% 1% 3.5%;
           }
           .other-buttons{
-              display: block;
-              margin: 0 auto;
-              color: white;
-              margin-top:30px;  
-              font-size: 17px;
-              padding: 25px;
-          }
+            display: block;
+            margin: 0 auto;
+            --box-shadow:none;
+            background-color: transparent; 
+            color: black;
+            margin-top:30px; 
+            font-size: 17px;
+            padding: 25px;
+        }
           .other-buttons:hover{
               background-color: transparent; 
               color: black;

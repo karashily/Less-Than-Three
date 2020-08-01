@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { SignUpLogInPage } from '../signuplogin/signuplogin';
+import { FirebaseAuthServiceProvider } from '../../providers/firebase-auth-service/firebase-auth-service';
 
 /**
  * Generated class for the ProfilePage page.
@@ -17,7 +19,7 @@ export class ProfilePage {
 
   title: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public firebaseAuthService: FirebaseAuthServiceProvider) {
   	this.title="Profile"
   }
 
@@ -26,7 +28,12 @@ export class ProfilePage {
   }
 
   logOut(){
-    
+    this.firebaseAuthService.signOut().then((res)=>{
+      this.navCtrl.push(SignUpLogInPage).then(()=>{
+        const index = this.navCtrl.getActive().index;
+        this.navCtrl.remove(0, index);
+      });
+    });
   }
 
 }

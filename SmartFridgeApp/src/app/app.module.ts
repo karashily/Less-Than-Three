@@ -3,16 +3,28 @@ import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { firebaseConfig } from './credentials';
+import {AngularFireAuthModule} from 'angularfire2/auth'
+
 import { FridgePage } from '../pages/fridge/fridge';
 import { StatisticsPage } from '../pages/statistics/statistics';
 import { AdvicePage } from '../pages/advice/advice';
 import { ProfilePage } from '../pages/profile/profile';
 import { TabsPage } from '../pages/tabs/tabs';
+import { SplashPage } from '../pages/splash/splash';
+import { SignUpLogInPage } from '../pages/signuplogin/signuplogin';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { FacialEmotionPage } from '../pages/facial-emotion/facial-emotion';
 import { EmotionRecommendationPage } from '../pages/emotion-recommendation/emotion-recommendation';
+import { FirebaseAuthServiceProvider } from '../providers/firebase-auth-service/firebase-auth-service';
+import { SignUpPage } from '../pages/signup/signup';
+import { LogInPage } from '../pages/login/login';
+import { ForgotPasswordPage } from '../pages/forgot-password/forgot-password';
+import { AddFoodToFridgePage } from '../pages/add-food-to-fridge/add-food-to-fridge';
 
 @NgModule({
   declarations: [
@@ -23,11 +35,20 @@ import { EmotionRecommendationPage } from '../pages/emotion-recommendation/emoti
     AdvicePage,
     ProfilePage,
     FacialEmotionPage,
-    EmotionRecommendationPage
+    EmotionRecommendationPage,
+    SplashPage,
+    SignUpLogInPage,
+    SignUpPage,
+    LogInPage,
+    ForgotPasswordPage,
+    AddFoodToFridgePage
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule,
+    AngularFireAuthModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -38,12 +59,18 @@ import { EmotionRecommendationPage } from '../pages/emotion-recommendation/emoti
     AdvicePage,
     ProfilePage,
     FacialEmotionPage,
-    EmotionRecommendationPage
+    EmotionRecommendationPage,
+    SplashPage,
+    SignUpLogInPage,
+    SignUpPage,
+    LogInPage,
+    ForgotPasswordPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    FirebaseAuthServiceProvider
   ]
 })
 export class AppModule {}

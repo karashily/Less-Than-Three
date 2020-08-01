@@ -37,4 +37,46 @@ export class AdvicePage {
     });
   }
 
+  sad(event){
+    this.navCtrl.push(EmotionRecommendationPage, {
+      emotion: "Sad"
+    });
+  }
+
+  angry(event){
+    this.navCtrl.push(EmotionRecommendationPage, {
+      emotion: "Angry"
+    });
+  }
+
+  disgusted(event){
+    this.navCtrl.push(EmotionRecommendationPage, {
+      emotion: "Disgusted"
+    });
+  }
+
+  scared(event){
+    this.navCtrl.push(EmotionRecommendationPage, {
+      emotion: "Scared"
+    });
+  }
+
+  stressed(event){
+    this.navCtrl.push(EmotionRecommendationPage, {
+      emotion: "Stressed"
+    });
+  }
+
+  bored(event){
+    this.navCtrl.push(EmotionRecommendationPage, {
+      emotion: "Bored"
+    });
+  }
+
+  distressed(event){
+    this.navCtrl.push(EmotionRecommendationPage, {
+      emotion: "Distressed"
+    });
+  }
+
 }

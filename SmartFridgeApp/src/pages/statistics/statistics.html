@@ -5,16 +5,27 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-  <ion-navbar>
-    <ion-buttons left> 
-      <button class="navbar-button" (click)="openSettings()"> 
-        <ion-icon name="settings" class="navbar-icon"></ion-icon>
-      </button> 
-    </ion-buttons> 
+  <ion-navbar> 
     <ion-title>{{title | uppercase}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
+  <ion-card class="myCard"> 
+  
+    <div style="background-color: #fc933d; text-align: center; color: white; padding: 10px; font-size: 17px;">My Calorie Progress</div>
+    <ion-list style="height: 100px;">
+      <div>
+    </div>
+    </ion-list>
+  </ion-card>
+
+  <ion-card class="myCard" style="margin-top: 30px;"> 
+    <div style="background-color: #ffbe73; text-align: center; color: white; padding: 10px; font-size: 17px;">My Nutrients</div>
+    <ion-list style="height: 100px;">
+      <div>
+     </div>
+    </ion-list>
+  </ion-card>
 
 </ion-content>
