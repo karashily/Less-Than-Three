@@ -6,6 +6,9 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { SignUpLogInPage } from '../signuplogin/signuplogin';
 import { FoodEntry } from '../../objects/foodEntry';
 import { Food } from '../../objects/food';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { take } from 'rxjs/operators';
+import { User } from '../../objects/user';
 
 /**
  * Generated class for the FacialEmotionPage page.
@@ -51,8 +54,7 @@ export class FacialEmotionPage {
   @ViewChild(Navbar) navBar: Navbar;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public emotionNutrientRestService: EmotionNutrientRestServiceProvider,
-    public angularFireAuth: AngularFireAuth, public angularFireStore: AngularFirestore) {
-      this.emotionNutrientRestService.initUser();
+    public angularFireAuth: AngularFireAuth, public angularFireStore: AngularFirestore, public iab: InAppBrowser) {
 
     var a = this;
 
@@ -141,7 +143,6 @@ export class FacialEmotionPage {
       }
     });
 
-
     this.onStart();
   }
 
@@ -192,8 +193,12 @@ yesEmotion(){
     document.querySelector("#two").innerHTML="Checking your fridge for food which corresponds with your emotions...";
     this.angularFireAuth.authState.subscribe(res => {
       if (res && res.uid) {
-        this.fridge = this.angularFireStore.doc<any>('users/'+res.uid).collection('fridge').valueChanges().subscribe((res)=>{
-          this.getFoodForMood(res);
+        console.log("HERE AGAIN");
+        this.angularFireStore.firestore.doc('/users/'+res.uid).collection('fridge').get().then(docSnapshot => {
+          if (docSnapshot) {
+            console.log("USER: "+JSON.stringify(docSnapshot.docs.map(doc => doc.data())));
+            this.getFoodForMood(docSnapshot.docs.map(doc => doc.data()));
+          }
         });
       } else {
         this.navCtrl.push(SignUpLogInPage, {}).then(()=>{
@@ -205,9 +210,18 @@ yesEmotion(){
  }
 
  async getFoodForMood(fridge){
-  if(fridge.length>0){
+  if(fridge!==null && fridge.length>0){
     this.preliminary=true;
-    this.emotionsArray=this.emotionNutrientRestService.predictEmotions( document.querySelector("#two"));
+    this.emotionNutrientRestService.initUser().subscribe(
+      data => {
+        console.log("INIT USER FACIAL EMOTION: "+JSON.stringify(data));
+        var res=this.emotionNutrientRestService.predictEmotions();
+          console.log("RETURNED EMOTIONS: "+JSON.stringify(this.emotionFoods));
+      },
+      error=>{
+        console.log("ERROR: " +JSON.stringify(error));
+      }
+    );
   }else{
     this.preliminary=true;
     document.querySelector("#two").innerHTML="There is no food in your fridge!";
@@ -226,22 +240,20 @@ yesEmotion(){
     return indexes;
   }
 
-  scrapeForRecipes(selectedFood, allOtherRecommendedFoods){
-    var baseURL="https://www.bigoven.com/";
+  getRecipes(selectedFood){
+    var baseURL="https://www.bigoven.com/recipes/";
     let ingredientName=selectedFood.foodName;
     var words = ingredientName.split(" ");
-    var otherRecipesIndex=allOtherRecommendedFoods.length;
-    while(this.recipes.length<=10){
-      var index=0;
-      for (let word of words){
-        if(index!==words.length-1){
-          baseURL+=word+"%20";
-          index++;
-        }else{
-          baseURL+=word;
-          index++;
-        }
+    for (var i =0; i<words.length; i++){
+      if(i==words.length-1){
+        baseURL+=words[i];
+      }else{
+        baseURL+=words[i]+"%20";
       }
     }
+    baseURL+="/best";
+    const browser = this.iab.create(baseURL);
+    browser.show();
   }
+
 }

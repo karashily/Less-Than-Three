@@ -6,6 +6,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { FirebaseAuthServiceProvider } from '../../providers/firebase-auth-service/firebase-auth-service';
 import { User } from '../../objects/user';
 import { TabsPage } from '../tabs/tabs';
+import { EmotionNutrientRestServiceProvider } from '../../providers/emotion-nutrient-rest-service/emotion-nutrient-rest-service';
 
 /**
  * Generated class for the OnboardingPage page.
@@ -44,10 +45,11 @@ export class OnboardingPage {
   weight: number;
   age: number;
 
-  emotionsQuestion: string="Imagine you just got a good grade on a test, what would you eat?";
+  emotionsQuestion: string="What foods would make you happy?";
   emotionFoods: any=[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public angularFireAuth: AngularFireAuth, public angularFireStore: AngularFirestore, public toastCtrl: ToastController, public firebaseAuthService: FirebaseAuthServiceProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public angularFireAuth: AngularFireAuth, public angularFireStore: AngularFirestore, public toastCtrl: ToastController, public firebaseAuthService: FirebaseAuthServiceProvider,
+    public emotionNutrientRestService: EmotionNutrientRestServiceProvider) {
     this.user=navParams.get('user');
     this.email=navParams.get('email');
     this.password=navParams.get('password');
@@ -165,30 +167,28 @@ export class OnboardingPage {
         this.index++;
         this.changeScreenComponents();
       }
-    }else if (this.index==11){
-      if(this.user.contemptFoods.length==0){
-        let toast = this.toastCtrl.create({
-          message: "Please enter the foods of your selection.",
-          duration: 3000
-        });
-        toast.present();
-      } else{
-        this.index++;
-        this.changeScreenComponents();
-      }
-    } else if(this.index==12){
+    }else if(this.index==11){
         this.register();
     }
   }
 
-  register(){
+  async register(){
     this.firebaseAuthService.registerUser(this.email, this.password).then((res) => {
       this.user.uid=res.uid;
       this.firebaseAuthService.setUserData(this.user).then((userData)=>{
-        this.navCtrl.push(TabsPage, {}).then(()=>{
-          const index = this.navCtrl.getActive().index;
-          this.navCtrl.remove(0, index);
-        });
+        this.emotionNutrientRestService.initUser().subscribe(
+          data => {
+            alert(JSON.stringify(data));
+            this.emotionNutrientRestService.trainModelWhenOnboarding(this.user);
+            this.navCtrl.push(TabsPage, {}).then(()=>{
+              const index = this.navCtrl.getActive().index;
+              this.navCtrl.remove(0, index);
+            });
+          },
+          error => {
+            alert(JSON.stringify(error));
+          }
+        );
       });
     });
   }
@@ -225,11 +225,7 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.happyFoods;
-      if(this.age<=22){
-        this.emotionsQuestion="Imagine you just got a good grade on a test, what would you eat?";
-      }else{
-        this.emotionsQuestion="Imagine you just got a promotion at work, what would you eat?";
-      }
+      this.emotionsQuestion="You come home from work after a very rewarding day. You still feel energetic and want to reward yourself. What do you eat?";
     } else if(this.index==4){
       this.foodList = await this.initializeItems();
       if(this.user.sadFoods==null){
@@ -237,7 +233,7 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.sadFoods;
-      this.emotionsQuestion="What would you eat after a big fight with your best friend? ";
+      this.emotionsQuestion="You recently had a falling out with your significant other, and are very sad about it. Would would you eat to feel happier?";
     } else if(this.index==5){
       this.foodList = await this.initializeItems();
       if(this.user.angryFoods==null){
@@ -245,7 +241,7 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.angryFoods;
-      this.emotionsQuestion="Imagine someone hit your brand-new car, badly dented it, and ran before you could catch them. What would you eat when you arrive home? ";
+      this.emotionsQuestion="You just had a massive fight with your roommate about her messy ways in the house, and she storms out. What do you eat to calm yourself down?";
     } else if(this.index==6){
       this.foodList = await this.initializeItems();
       if(this.user.disgustedFoods==null){
@@ -253,7 +249,7 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.disgustedFoods;
-      this.emotionsQuestion="Imagine your new roommate is actually a really big slob, and leaves her dirty clothes and food wrappers around the house. What would you eat before cleaning up the mess?";
+      this.emotionsQuestion="Your roommate has a stomach bug and is throwing up and you have to take care of her. Unfortunately, this means cleaning up after her. What would you eat to settle your stomach?";
     } else if(this.index==7){
       this.foodList = await this.initializeItems();
       if(this.user.scaredFoods==null){
@@ -261,7 +257,7 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.scaredFoods;
-      this.emotionsQuestion="Imagine you had just seen a horror movie and were alone in your house at night. However, you feel very hungry and can't sleep without getting something to eat. What would you eat?";
+      this.emotionsQuestion="You just watched a horror movie alone at night. However, you can't go to bed because you're very hungry. What would you eat to calm yourself down?";
     } else if(this.index==8){
       this.foodList = await this.initializeItems();
       if(this.user.stressedFoods==null){
@@ -269,7 +265,7 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.stressedFoods;
-      this.emotionsQuestion="Imagine you have an urgent deadline tonight, and you've only finished half of it. what do you eat?";
+      this.emotionsQuestion="A very urgent assignment is due tonight, and you're only halfway done. You're very stressed, and you need to calm yourself. What would you eat?";
     } else if(this.index==9){
       this.foodList = await this.initializeItems();
       if(this.user.boredFoods==null){
@@ -277,7 +273,7 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.boredFoods;
-      this.emotionsQuestion="Imagine that you're alone and bored in your house on a Friday or Saturday night, what would you eat?";
+      this.emotionsQuestion="You feel bored and lethargic on a Friday night. What would you eat to boost your mood and energy?";
     } else if(this.index==10){
       this.foodList = await this.initializeItems();
       if(this.user.distressedFoods==null){
@@ -285,18 +281,8 @@ export class OnboardingPage {
       } 
       this.emotionFoods=[];
       this.emotionFoods=this.user.distressedFoods;
-      this.emotionsQuestion="What would you eat after you realize that you just got rejected from most of the colleges you applied to, and you only have one more decision to come out?";
+      this.emotionsQuestion="You recently learned that you were rejected from almost every college you applied to, but still have one decision to go. What would you eat to calm and center yourself?";
     }else if(this.index==11){
-      this.emotionsDiv=true;
-      this.goalsDiv=false;
-      this.foodList = await this.initializeItems();
-      if(this.user.contemptFoods==null){
-        this.user.contemptFoods=[];
-      } 
-      this.emotionFoods=[];
-      this.emotionFoods=this.user.contemptFoods;
-      this.emotionsQuestion="Imagine you got fired from an easy job, what would you eat for dinner?";
-    } else if(this.index==12){
       this.emotionsDiv=false;
       this.goalsDiv=true;
     }
@@ -314,7 +300,6 @@ export class OnboardingPage {
     if(this.index==8) this.user.stressedFoods=this.emotionFoods;
     if(this.index==9) this.user.boredFoods=this.emotionFoods;
     if(this.index==10) this.user.distressedFoods=this.emotionFoods;
-    if(this.index==11) this.user.contemptFoods=this.emotionFoods;
   }
 
   selectFoodForEmotion(food){
@@ -375,13 +360,6 @@ export class OnboardingPage {
         }
         this.emotionFoods.push(distressedFood);
         this.user.distressedFoods=this.emotionFoods;
-      } else if(this.index==11){
-        let contemptFood={
-          foodName: food.Ingredient_Name,
-          ingredientCode: food.Ingredient_Code
-        }
-        this.emotionFoods.push(contemptFood);
-        this.user.contemptFoods=this.emotionFoods;
       }
     }
   }

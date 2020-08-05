@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from  'rxjs/Observable';
-import  'rxjs/add/operator/catch';
-import  'rxjs/add/operator/map';
+import { HttpClient} from '@angular/common/http';
+import { Injectable, NgModule } from '@angular/core';
+import {Http, Headers, RequestOptions} from '@angular/http';
+import 'rxjs/add/operator/map';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { foodNutritionData } from '../../data/foodNutritionData';
@@ -18,11 +17,41 @@ import { Emotion } from '../../objects/emotion';
 @Injectable()
 export class EmotionNutrientRestServiceProvider {
 
-  baseUrl:string = "http://localhost:5000/";
+  happyFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "11976", "11477", "1256"];
+  sadFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "11976", "11477", "1256"];
+  stressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200"];
+  distressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200"];
+  scaredFoodIDs: any=["11457", "11233", "12085", "1123", "9200"];
+  boredFoodIDs: any=["1116", "9040", "20036", "11507", "11080"];
+  angryFoodIDs: any=["9316", "12220", "12155","12695","12037"];
+  disgustedFoodIDs: any=["9316", "12220", "12155","12695","12037"];
+
+  lessHappyFoodIDs: any=["9209","14130","18248","14179","14625","19088","1077","36014","21464","19047","43276","7057","7961","16123","10862","18155",
+"42236","19068","19069","19070","19142"];
+  moreSadFoodIDs: any=["9209","14130","18248","14179","14625","19088","1077","36014","21464","19047","43276","7057","7961","16123","10862","18155",
+  "42236","19068","19069","19070","19142"];
+  moreStressedFoodIDs: any=["8510", "8546","19438", "19896", "19905", "19910", "19913", "19914","19917","19919","19921","19922","19923","28312","28313","42173",
+  "100173","7005","7014","14179","14201","14202","14210","14552","21464","36014","7057","14174","21151","14021","18090","18095","18151","18248",
+"11135","11994","19003","27043","9400","42236"];
+  moreDistressedFoodIDs: any=["8510", "8546","19438", "19896", "19905", "19910", "19913", "19914","19917","19919","19921","19922","19923","28312","28313","42173",
+  "100173","7005","7014","14179","14201","14202","14210","14552","21464","36014","7057","14174","21151","14021","18090","18095","18151","18248",
+"11135","11994","19003","27043","9400","42236"];
+  moreScaredFoodIDs: any=["8510", "8546","19438", "19896", "19905", "19910", "19913", "19914","19917","19919","19921","19922","19923","28312","28313","42173",
+  "100173","7005","7014","14179","14201","14202","14210","14552","21464","36014","7057","14174","21151","14021","18090","18095","18151","18248",
+"11135","11994","19003","27043","9400","42236"];
+  moreBoredFoodIDs: any=["21090","36014","19068","19069","19070","19142","19151","19152","21224","28312","42283","18258","9070","20120",
+  "22247","42236","18155","27035","43506","43541","1077","42140"];
+  moreAngryFoodIDs: any=["11529","11209","36014","21090","18090","18096","18155","18015","4610","21224","18248",
+  "21464","25001","25026","25064","28303","19068","19069","19070","19142","19151","19293","42236","10862","42140"];
+  moreDisgustedFoodIDs: any=["11529","11209","36014","21090","18090","18096","18155","18015","4610","21224","18248",
+  "21464","25001","25026","25064","28303","19068","19069","19070","19142","19151","19293","42236","10862","42140"];
+
+  baseUrl:string = "http://karashily-4090a3de.localhost.run/";
   username: string="";
   uid: string="";
   fridge: any=[];
   emotionFoods: any=[];
+  requestOptions: any;
 
   constructor(public http: HttpClient, public angularFireAuth: AngularFireAuth, public angularFireStore: AngularFirestore) {
     console.log('Hello EmotionNutrientRestServiceProvider Provider');
@@ -36,46 +65,75 @@ export class EmotionNutrientRestServiceProvider {
 
   initUser(){
     if(this.username!==""){
-      return this.http.get(this.baseUrl + '/init_user/'+this.username);  
+      var headers = new Headers();
+      headers.append('Access-Control-Allow-Origin' , '*');
+      headers.append('Access-Control-Allow-Methods', 'GET');
+      headers.append('Content-Type', 'application/json' );
+      this.requestOptions = new RequestOptions({ headers: headers });
+      return this.http.get(this.baseUrl + 'init_user/'+this.username, this.requestOptions);  
     }
   }
 
-  predictEmotions(text){
+  predictEmotions(): any{
     if(this.username!=="" && this.uid!==""){
-      this.fridge = this.angularFireStore.doc<any>('users/'+this.uid).collection('fridge').valueChanges().subscribe((res)=>{
-        for (let fridgeItem of res){
-          var fridgeFoodData = foodNutritionData.foodData.filter(obj => {
-            return obj.Ingredient_Code === fridgeItem["ingredientCode"]
-          })[0];
-          let emotionFood=this.http.get(this.baseUrl + 'predict_mood/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
-          +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
-          +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
-          +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
-          +"&magnesium="+fridgeFoodData["Magnesium"]+"&phosphorus="+fridgeFoodData["Phosphorus"]+"&potassium="+fridgeFoodData["Potassium"]
-          +"&sodium="+fridgeFoodData["Sodium"]+"&zinc="+fridgeFoodData["Zinc"]+"&copper="+fridgeFoodData["Copper"]
-          +"&selenium="+fridgeFoodData["Selenium"]+"&retinol="+fridgeFoodData["Retinol"]+"&vitA="+fridgeFoodData["Vitamin A"]
-          +"&betaCarotene="+fridgeFoodData["Beta Carotene"]+"&alphaCarotene="+fridgeFoodData["Alpha Carotene"]+"&vitE="+fridgeFoodData["Vitamin E"]
-          +"&vitD="+fridgeFoodData["Vitamin D"]+"&cryptoxanthin="+fridgeFoodData["Cryptoxanthin"]+"&Lycopene="+fridgeFoodData["Lycopene"]
-          +"&Lutein="+fridgeFoodData["Lutein"]+"&vitC="+fridgeFoodData["Vitamin C"]+"&thiamin="+fridgeFoodData["Thiamin"]
-          +"&riboflavin="+fridgeFoodData["Riboflavin"]+"&niacin="+fridgeFoodData["Niacin"]+"&vitB6="+fridgeFoodData["Vitamin B-6"]
-          +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
-          +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
-          +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"]);
-          this.emotionFoods.push(emotionFood);
-        }
-        text.innerHTML=JSON.stringify(this.emotionFoods[0]);
-        return this.emotionFoods;
-      });
+          this.angularFireStore.firestore.doc('/users/'+this.uid).collection('fridge').get().then(docSnapshot => {
+            if(docSnapshot){
+              var res=docSnapshot.docs.map(doc => doc.data());
+              for (let fridgeItem of res){
+                var fridgeFoodData = foodNutritionData.foodData.filter(obj => {
+                  return obj.Ingredient_Code === fridgeItem["ingredientCode"]
+                })[0];
+                this.http.get(this.baseUrl + 'predict_mood/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
+                +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
+                +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
+                +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
+                +"&magnesium="+fridgeFoodData["Magnesium"]+"&phosphorus="+fridgeFoodData["Phosphorus"]+"&potassium="+fridgeFoodData["Potassium"]
+                +"&sodium="+fridgeFoodData["Sodium"]+"&zinc="+fridgeFoodData["Zinc"]+"&copper="+fridgeFoodData["Copper"]
+                +"&selenium="+fridgeFoodData["Selenium"]+"&retinol="+fridgeFoodData["Retinol"]+"&vitA="+fridgeFoodData["Vitamin A"]
+                +"&betaCarotene="+fridgeFoodData["Beta Carotene"]+"&alphaCarotene="+fridgeFoodData["Alpha Carotene"]+"&vitE="+fridgeFoodData["Vitamin E"]
+                +"&vitD="+fridgeFoodData["Vitamin D"]+"&cryptoxanthin="+fridgeFoodData["Cryptoxanthin"]+"&Lycopene="+fridgeFoodData["Lycopene"]
+                +"&Lutein="+fridgeFoodData["Lutein"]+"&vitC="+fridgeFoodData["Vitamin C"]+"&thiamin="+fridgeFoodData["Thiamin"]
+                +"&riboflavin="+fridgeFoodData["Riboflavin"]+"&niacin="+fridgeFoodData["Niacin"]+"&vitB6="+fridgeFoodData["Vitamin B-6"]
+                +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
+                +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
+                +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"]).subscribe(
+                  data => {
+                    console.log("PREDICT DATA: " +JSON.stringify(data));
+                    this.emotionFoods.push(data["mood"]);
+                  },
+                  error=>{
+                    console.log("PREDICT ERROR: " +JSON.stringify(error));
+                  }
+                );
+                console.log("PREDICT EMOTION URL: "+this.baseUrl + 'predict_mood/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
+                +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
+                +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
+                +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
+                +"&magnesium="+fridgeFoodData["Magnesium"]+"&phosphorus="+fridgeFoodData["Phosphorus"]+"&potassium="+fridgeFoodData["Potassium"]
+                +"&sodium="+fridgeFoodData["Sodium"]+"&zinc="+fridgeFoodData["Zinc"]+"&copper="+fridgeFoodData["Copper"]
+                +"&selenium="+fridgeFoodData["Selenium"]+"&retinol="+fridgeFoodData["Retinol"]+"&vitA="+fridgeFoodData["Vitamin A"]
+                +"&betaCarotene="+fridgeFoodData["Beta Carotene"]+"&alphaCarotene="+fridgeFoodData["Alpha Carotene"]+"&vitE="+fridgeFoodData["Vitamin E"]
+                +"&vitD="+fridgeFoodData["Vitamin D"]+"&cryptoxanthin="+fridgeFoodData["Cryptoxanthin"]+"&Lycopene="+fridgeFoodData["Lycopene"]
+                +"&Lutein="+fridgeFoodData["Lutein"]+"&vitC="+fridgeFoodData["Vitamin C"]+"&thiamin="+fridgeFoodData["Thiamin"]
+                +"&riboflavin="+fridgeFoodData["Riboflavin"]+"&niacin="+fridgeFoodData["Niacin"]+"&vitB6="+fridgeFoodData["Vitamin B-6"]
+                +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
+                +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
+                +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"])
+              }
+              console.log("ALL PREDICTED EMOTIONS: "+JSON.stringify(this.emotionFoods));
+              return this.emotionFoods;
+            }
+          });
     }
   }
 
-  learn(foodEntry: FoodEntry, emotion: Emotion){
+  learn(ingredientCode: string, emotionId: string){
     //when the user is setting up their account, train this model on the food proven to help with different emotions AND on the foods which the user enters
     if(this.username!==""){
       var fridgeFoodData = foodNutritionData.foodData.filter(obj => {
-        return obj.Ingredient_Code === foodEntry.food.ingredientCode
-      })
-        this.http.get(this.baseUrl + '/learn_behavior/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
+        return obj.Ingredient_Code === ingredientCode
+      })[0];
+        console.log(this.baseUrl + 'learn_behavior/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
         +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
         +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
         +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
@@ -89,8 +147,128 @@ export class EmotionNutrientRestServiceProvider {
         +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
         +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
         +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"]
-        +"&mood="+emotion.emotionId);
+        +"&mood="+emotionId);
+        return this.http.get(this.baseUrl + 'learn_behavior/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
+        +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
+        +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
+        +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
+        +"&magnesium="+fridgeFoodData["Magnesium"]+"&phosphorus="+fridgeFoodData["Phosphorus"]+"&potassium="+fridgeFoodData["Potassium"]
+        +"&sodium="+fridgeFoodData["Sodium"]+"&zinc="+fridgeFoodData["Zinc"]+"&copper="+fridgeFoodData["Copper"]
+        +"&selenium="+fridgeFoodData["Selenium"]+"&retinol="+fridgeFoodData["Retinol"]+"&vitA="+fridgeFoodData["Vitamin A"]
+        +"&betaCarotene="+fridgeFoodData["Beta Carotene"]+"&alphaCarotene="+fridgeFoodData["Alpha Carotene"]+"&vitE="+fridgeFoodData["Vitamin E"]
+        +"&vitD="+fridgeFoodData["Vitamin D"]+"&cryptoxanthin="+fridgeFoodData["Cryptoxanthin"]+"&Lycopene="+fridgeFoodData["Lycopene"]
+        +"&Lutein="+fridgeFoodData["Lutein"]+"&vitC="+fridgeFoodData["Vitamin C"]+"&thiamin="+fridgeFoodData["Thiamin"]
+        +"&riboflavin="+fridgeFoodData["Riboflavin"]+"&niacin="+fridgeFoodData["Niacin"]+"&vitB6="+fridgeFoodData["Vitamin B-6"]
+        +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
+        +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
+        +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"]
+        +"&mood="+emotionId);
     }
+  }
+
+
+  trainModelWhenOnboarding(user){
+    console.log("train model when onboarding");
+      /*
+Happy: 0
+Sad: 1
+Angry: 2
+Disgusted: 3
+Scared: 4
+Stressed: 5
+Bored: 6
+Distressed: 7
+Less Happy: 8
+More Sad: 9
+More Angry: 10
+More Disgusted: 11
+More Scared: 12
+More Stressed: 13
+More Bored: 14
+More Distressed: 15*/
+    for(let happyFood of user.happyFoods){
+      console.log("INGREDIENT CODE: "+happyFood.ingredientCode);
+      this.learn(happyFood.ingredientCode, "0").subscribe(
+        data => {
+          console.log("DATA: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("ERROR: " +JSON.stringify(error));
+        }
+      );
+    }
+    for(let happyFood of this.happyFoodIDs){
+      this.learn(happyFood, "0");
+    }
+    for(let sadFood of user.sadFoods){
+      this.learn(sadFood.ingredientCode, "1");
+    }
+    for(let sadFood of this.sadFoodIDs){
+      this.learn(sadFood, "1");
+    }
+    for(let angryFood of user.angryFoods){
+      this.learn(angryFood.ingredientCode, "2");
+    }
+    for(let angryFood of this.angryFoodIDs){
+      this.learn(angryFood, "2");
+    }
+    for(let disgustedFood of user.disgustedFoods){
+      this.learn(disgustedFood.ingredientCode, "3");
+    }
+    for(let disgustedFood of this.disgustedFoodIDs){
+      this.learn(disgustedFood, "3");
+    }
+    for(let scaredFood of user.scaredFoods){
+      this.learn(scaredFood.ingredientCode, "4");
+    }
+    for(let scaredFood of this.scaredFoodIDs){
+      this.learn(scaredFood, "4");
+    }
+    for(let stressedFood of user.stressedFoods){
+      this.learn(stressedFood.ingredientCode, "5");
+    }
+    for(let stressedFood of this.stressedFoodIDs){
+      this.learn(stressedFood, "5");
+    }
+    for(let boredFood of user.boredFoods){
+      this.learn(boredFood.ingredientCode, "6");
+    }
+    for(let boredFood of this.boredFoodIDs){
+      this.learn(boredFood, "6");
+    }
+    for(let distressedFood of user.distressedFoods){
+      this.learn(distressedFood.ingredientCode, "7");
+    }
+    for(let distressedFood of this.distressedFoodIDs){
+      this.learn(distressedFood, "7");
+    }
+
+    for(let happyFood of this.lessHappyFoodIDs){
+      this.learn(happyFood, "8");
+    }
+    for(let sadFood of this.moreSadFoodIDs){
+      this.learn(sadFood, "9");
+    }
+    for(let angryFood of this.moreAngryFoodIDs){
+      this.learn(angryFood, "10");
+    }
+    for(let disgustedFood of this.moreDisgustedFoodIDs){
+      this.learn(disgustedFood, "11");
+    }
+    for(let scaredFood of this.moreScaredFoodIDs){
+      this.learn(scaredFood, "12");
+    }
+    for(let stressedFood of this.moreStressedFoodIDs){
+      this.learn(stressedFood, "13");
+    }
+    for(let boredFood of this.moreBoredFoodIDs){
+      this.learn(boredFood, "14");
+    }
+    for(let distressedFood of this.moreDistressedFoodIDs){
+      this.learn(distressedFood, "15");
+    }
+    console.log("done");
+    return user;
   }
 
 }

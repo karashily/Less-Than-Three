@@ -73,7 +73,8 @@ export class SignUpPage {
             stressedFoods: stressedFoods,
             boredFoods: boredFoods,
             distressedFoods: distressedFoods,
-            contemptFoods: contemptFoods
+            logMealApiKey: "",
+            logMealId: ""
           }
           this.navCtrl.push(OnboardingPage, {
             user: userData,

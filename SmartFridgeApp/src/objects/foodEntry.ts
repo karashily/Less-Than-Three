@@ -3,7 +3,7 @@ import { Emotion } from "./emotion";
 
 export interface FoodEntry {
     food: Food;
-    time: number;
+    time: string;
     initialEmotion: Emotion;
     finalEmotion: Emotion;
  }

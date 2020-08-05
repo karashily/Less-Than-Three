@@ -16,7 +16,13 @@
 </ion-header>
 
 <ion-content padding>
-  <p style="text-align: center;" class="central">Take a photo of a food item in your fridge or choose a photo from your gallery to add it to your fridge food list.</p>
-  <button ion-button round color="white" class="main-buttons-1" (click)="takePhoto()">TAKE PHOTO</button>
-  <button ion-button round color="white" class="main-buttons-2" (click)="chooseFromGallery()">CHOOSE FROM GALLERY</button>
+  <p style="text-align: center;" class="central" *ngIf="initial==true">Take a photo of a food item in your fridge or choose a photo from your gallery to add it to your fridge food list.</p>
+  <button ion-button round color="white" *ngIf="initial==true" class="main-buttons-1" (click)="takePhoto()">TAKE PHOTO</button>
+  <button ion-button round color="white" *ngIf="initial==true" class="main-buttons-2" (click)="chooseFromGallery()">CHOOSE FROM GALLERY</button>
+  <p style="margin: 10px; font-size: 17px;" *ngIf="chooseFood==true">Please select the food which you just took a photo of.</p>
+  <ion-list *ngIf="chooseFood==true">
+    <div *ngFor="let recognize of recognizedFoods">
+      <p style="margin: 10px; font-size: 15px;">{{recognize.Ingredient_Name}}</p>
+    </div>
+  </ion-list>
 </ion-content>

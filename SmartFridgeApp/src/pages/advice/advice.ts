@@ -3,6 +3,10 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { FacialEmotionPage } from '../facial-emotion/facial-emotion';
 import { EmotionRecommendationPage } from '../emotion-recommendation/emotion-recommendation';
 import { AddFridgeItemPage } from '../add-fridge-item/add-fridge-item';
+import { RecipeServiceProvider } from '../../providers/recipe-service/recipe-service';
+import { EmotionNutrientRestServiceProvider } from '../../providers/emotion-nutrient-rest-service/emotion-nutrient-rest-service';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFirestore } from 'angularfire2/firestore';
 
 /**
  * Generated class for the AdvicePage page.
@@ -19,15 +23,18 @@ import { AddFridgeItemPage } from '../add-fridge-item/add-fridge-item';
 export class AdvicePage {
 
   title: any;
+  user: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  	this.title="Advice"
+  constructor(public navCtrl: NavController, public navParams: NavParams, public recipeService: RecipeServiceProvider,
+    public emotionNutrientRestService: EmotionNutrientRestServiceProvider, public angularFireAuth: AngularFireAuth,
+    public firestore: AngularFirestore) {
+    this.title="Advice"
   }
-
+  
   ionViewDidLoad() {
     console.log('ionViewDidLoad AdvicePage');
   }
-
+  
   launchFacialEmotionRecognition (event){
     this.navCtrl.push(FacialEmotionPage, {});
   }

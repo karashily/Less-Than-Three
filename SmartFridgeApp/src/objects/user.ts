@@ -6,7 +6,7 @@ import { FoodObject } from "./foodObject";
 export interface User {
    uid: string;
    name: string;
-   foodEntries: Map<number, FoodEntry>;
+   foodEntries: Map<string, FoodEntry>;
    fridge: [Food];
    groceryList: [Food];
    allergies: [Allergy];
@@ -24,5 +24,6 @@ export interface User {
    stressedFoods: [FoodObject];
    boredFoods: [FoodObject];
    distressedFoods: [FoodObject];
-   contemptFoods: [FoodObject];
+   logMealApiKey: string;
+   logMealId: string;
 }

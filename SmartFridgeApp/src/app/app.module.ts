@@ -33,6 +33,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { FoodAiServiceProvider } from '../providers/food-ai-service/food-ai-service';
 import { AddFridgeItemPage } from '../pages/add-fridge-item/add-fridge-item';
 import { Camera } from '@ionic-native/camera';
+import { File } from '@ionic-native/file/ngx';  
+import { DailyNutrientServiceProvider } from '../providers/daily-nutrient-service/daily-nutrient-service';
+import { RecipeServiceProvider } from '../providers/recipe-service/recipe-service';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 @NgModule({
   declarations: [
@@ -90,7 +94,12 @@ import { Camera } from '@ionic-native/camera';
     FoodNutrientsProvider,
     EmotionNutrientRestServiceProvider,
     FoodAiServiceProvider,
-    Camera
+    Camera,
+    DailyNutrientServiceProvider,
+    File,
+    RecipeServiceProvider,
+    InAppBrowser
   ]
 })
+
 export class AppModule {}
