@@ -52,8 +52,8 @@ export class AdvicePage {
           }
         });
       }
-    });
-*/
+    }); */
+
   }
   
   launchFacialEmotionRecognition (event){

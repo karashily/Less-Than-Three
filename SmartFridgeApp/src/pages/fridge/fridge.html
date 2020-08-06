@@ -40,11 +40,11 @@
           <ion-icon (click)="addGroceryListItem()" name="add" color="whiteColor" style="font-size:23px; display: inline-block; *display: inline; zoom: 1; position: absolute; right: 0px; margin-right: 10px; padding: 10px;"></ion-icon>
           <p style="display: inline-block; *display: inline; zoom: 1; color: white; font-size: 17px; position: relative; top: 10px; margin-left: 20px;">My Grocery List</p> 
         </div>
-        <ion-list *ngIf="noGroceryList==false">
+        <ion-list *ngIf="noGroceryList==true">
           <ion-item *ngFor="let food of groceryList | async" (click)="getNutritionalData(food)">
               <p style="color: black; font-size: 16px;display: inline;">{{food.quantity}} {{food.foodName}}</p>
           </ion-item>
         </ion-list>
-        <p *ngIf="noGroceryList==true" style="margin-top: 10px; margin-left: 20px; margin-right: 20px; margin-bottom: 15px; font-size: 17px;">Add new items to your grocery list!</p>
+        <p *ngIf="noGroceryList==false" style="margin-top: 10px; margin-left: 20px; margin-right: 20px; margin-bottom: 15px; font-size: 17px;">Add new items to your grocery list!</p>
       </ion-card>
   </ion-content>

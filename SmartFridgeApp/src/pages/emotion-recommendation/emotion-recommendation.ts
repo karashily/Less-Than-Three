@@ -215,12 +215,44 @@ More Distressed: 15*/
             this.emotionNutrientRestService.initUser().subscribe(
               res => {
               for(let fridgeFood of fridge){
+                if(fridgeFood.quantity>0){
                   this.emotionNutrientRestService.predictEmotionForSpecificFood(fridgeFood).subscribe(
                     result => {
                       console.log("PREDICT DATA: " +fridgeFood.ingredientCode+" "+JSON.stringify(result));
                       let data=result["mood"];
                       console.log("DATA FOOD: "+data);
-                      if(data=="0"){
+                      /*
+Happy: 0
+Sad: 1
+Angry: 2
+Disgusted: 3
+Scared: 4
+Stressed: 5
+Bored: 6
+Distressed: 7
+Less Happy: 8
+More Sad: 9
+More Angry: 10
+More Disgusted: 11
+More Scared: 12
+More Stressed: 13
+More Bored: 14
+More Distressed: 15*/
+                      if(data==this.emotionId){
+                        this.foodList.push(fridgeFood.foodName);
+                      } else if(data=="1" && this.emotionId=="0"){
+                        this.foodList.push(fridgeFood.foodName);
+                      } else if(data=="0" && this.emotionId=="1"){
+                        this.foodList.push(fridgeFood.foodName);
+                      } else if(data=="2" && this.emotionId=="3"){
+                        this.foodList.push(fridgeFood.foodName);
+                      } else if(data=="3" && this.emotionId=="2"){
+                        this.foodList.push(fridgeFood.foodName);
+                      } else if(data=="4" && (this.emotionId=="5" || this.emotionId=="7")){
+                        this.foodList.push(fridgeFood.foodName);
+                      } else if(data=="5" && (this.emotionId=="4" || this.emotionId=="7")){
+                        this.foodList.push(fridgeFood.foodName);
+                      } else if(data=="7" && (this.emotionId=="4" || this.emotionId=="5")){
                         this.foodList.push(fridgeFood.foodName);
                       }
                     },
@@ -228,6 +260,7 @@ More Distressed: 15*/
                       console.log("PREDICT ERROR: " +JSON.stringify(error));
                     }
                   );
+                }
                 }
               },
             error=>{

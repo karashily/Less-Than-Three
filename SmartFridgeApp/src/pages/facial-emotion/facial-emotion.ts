@@ -9,6 +9,7 @@ import { Food } from '../../objects/food';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { take } from 'rxjs/operators';
 import { User } from '../../objects/user';
+import { foodNutritionData } from '../../data/foodNutritionData';
 
 /**
  * Generated class for the FacialEmotionPage page.
@@ -35,6 +36,15 @@ JSSDK.Assets = {
   templateUrl: 'facial-emotion.html',
 })
 export class FacialEmotionPage {
+
+  happyFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "9040", "11477", "1256", "15077", "15127", "11233", "9050", "9302", "12061", "42240"];
+sadFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "9040", "11477", "1256", "15077", "15127", "11233", "9050", "9302", "12061", "42240"];
+  stressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200", "9050", "9302", "42240", "5018", "13020", "15167" , "12085", "11212"];
+  distressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200", "9050", "9302", "42240", "5018", "13020", "15167" , "12085", "11212"];
+  scaredFoodIDs: any=["11457", "11233", "12085", "1123", "9200", "9050", "9302", "42240", "5018", "13020", "15167" , "12085", "11212"];
+  boredFoodIDs: any=["1116", "9040", "20036", "11507", "11080", "15077", "15127", "20137", "11457", "11233", "9004", "1123" ];
+  angryFoodIDs: any=["9316", "12220", "12155","12695","12037", "15077", "15127", "19905", "12061", "5314", "16090", "11212", "11124"];
+  disgustedFoodIDs: any=["9316", "12220", "12155","12695","12037", "15077", "15127", "19905", "12061", "5314", "16090", "11212", "11124"];
 
   detector1: any;
 
@@ -374,8 +384,126 @@ More Distressed: 15*/
     this.emotionNutrientRestService.initUser().subscribe(
       data => {
         console.log("INIT USER FACIAL EMOTION: "+JSON.stringify(data));
-        var res=this.emotionNutrientRestService.predictEmotions();
-          console.log("RETURNED EMOTIONS: "+JSON.stringify(this.emotionFoods));
+          this.angularFireStore.firestore.doc('/users/'+this.userId).collection('fridge').get().then(docSnapshot => {
+            if(docSnapshot){
+              var fridgeFoods=docSnapshot.docs.map(doc => doc.data());
+              console.log("FRIDGE FOODS: "+JSON.stringify(fridgeFoods));
+              var index=0;
+              for (let fridgeFood of fridgeFoods){
+                index++;
+                if(fridgeFood.quantity>0){
+                  this.emotionNutrientRestService.predictEmotionForSpecificFood(fridgeFood).subscribe(
+                    result => {
+                      console.log("PREDICT DATA: " +fridgeFood.ingredientCode+" "+JSON.stringify(result));
+                      let data=result["mood"];
+                      console.log("DATA FOOD: "+data);
+                      console.log(index);
+                      if(data==this.emotionId){
+                        this.emotionFoods.push(fridgeFood);
+                      }
+                      if(index==fridgeFoods.length){
+                        console.log("LAST ONE");
+                        this.foodChoices=true;
+                        this.preliminary=false;
+                        this.checkEmotion=false;
+                        if(this.emotionFoods.length==0){
+                          console.log("NOTHING");
+                          document.querySelector("#three").innerHTML="There is no food in your fridge to help with your current emotion! Consider buying some of these ingredients. Click on each to see a few recipes of them."
+                          if(this.emotionId=="0"){
+                            for(let happyFoodID of this.happyFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === happyFoodID
+                              })[0];
+                             
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          } else if(this.emotionId=="1"){
+                            for(let sadFoodID of this.sadFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === sadFoodID
+                              })[0];
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          } else if(this.emotionId=="2"){
+                            for(let happyFoodID of this.angryFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === happyFoodID
+                              })[0];
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          } else if(this.emotionId=="3"){
+                            for(let happyFoodID of this.disgustedFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === happyFoodID
+                              })[0];
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          } else if(this.emotionId=="4"){
+                            for(let happyFoodID of this.scaredFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === happyFoodID
+                              })[0];
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          } else if(this.emotionId=="5"){
+                            for(let happyFoodID of this.stressedFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === happyFoodID
+                              })[0];
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          } else if(this.emotionId=="6"){
+                            for(let happyFoodID of this.boredFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === happyFoodID
+                              })[0];
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          } else if(this.emotionId=="7"){
+                            for(let happyFoodID of this.distressedFoodIDs){
+                              var res = foodNutritionData.foodData.filter(obj => {
+                                return obj.Ingredient_Code === happyFoodID
+                              })[0];
+                              this.emotionFoods.push({
+                                foodName: res.Ingredient_Name,
+                                ingredientCode: res.Ingredient_Code
+                              });
+                            }
+                          }
+                        }
+                      }
+                    },
+                    error=>{
+                      console.log("PREDICT ERROR: " +JSON.stringify(error));
+                      index++;
+                    }
+                  );
+                }
+              }
+              console.log("HEREEE");
+            }
+          });
       },
       error=>{
         console.log("ERROR: " +JSON.stringify(error));

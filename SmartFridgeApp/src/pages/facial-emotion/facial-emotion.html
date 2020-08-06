@@ -20,8 +20,8 @@
 
 <ion-content padding>
   <p style="text-align: center;" id="three" *ngIf="foodChoices==true">Select an ingredient in your fridge for a meal: </p>
-  <ion-list style="background-color: transparent;">
-    <ion-item *ngFor="let emotionFood of emotionFoods" style="background-color: transparent;">
+  <ion-list style="background-color: transparent;" *ngIf="foodChoices==true">
+    <ion-item *ngFor="let emotionFood of emotionFoods" (click)="getRecipes(emotionFood)" style="background-color: transparent;">
       <ion-label class="ion-text-wrap" style="background-color: transparent;">
           <p style="background-color: transparent;">{{ emotionFood.foodName }}</p>
       </ion-label>
