@@ -45,16 +45,26 @@ export class FacialEmotionPage {
   preliminary: boolean=true;
   foodChoices: boolean=false;
 
+  userId: string;
+
   emotionId: string="-1";
+  emotionValue: string="-1";
 
   emotionFoods: any=[];
   recipes: any=[];
   emotionsArray: any=[];
+
+  foodEntry: any;
   
   @ViewChild(Navbar) navBar: Navbar;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public emotionNutrientRestService: EmotionNutrientRestServiceProvider,
     public angularFireAuth: AngularFireAuth, public angularFireStore: AngularFirestore, public iab: InAppBrowser) {
+
+    this.foodEntry=this.navParams.get("foodEntry");
+    if(this.foodEntry!==undefined){
+      this.title="CHECK CURRENT EMOTION AFTER EATING "+this.foodEntry.food.foodName;
+    }
 
     var a = this;
 
@@ -128,8 +138,11 @@ export class FacialEmotionPage {
         else if(maxEmotion=="anger") a.emotionId="2";
         else if(maxEmotion=="fear") a.emotionId="4";
 
+        a.emotionValue=maxEmotionNumber.toString();
+
         if (emotionsJSON.engagement<0.08){
           a.emotionId="6";
+          a.emotionValue=emotionsJSON.engagement.toString();
           document.querySelector('#one').innerHTML = "<span>Are you feeling bored?</span><br />";
         }else{
           document.querySelector('#one').innerHTML = "<span>Are you feeling " +maxEmotion + "?</span><br />";
@@ -173,6 +186,12 @@ export class FacialEmotionPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad FacialEmotionPage');
+    this.angularFireAuth.authState.subscribe(res => {
+      if (res && res.uid) {
+        console.log("HERE AGAIN");
+        this.userId=res.uid;
+      }
+    });
   }
 
   ionViewDidLeave(){
@@ -187,26 +206,166 @@ export class FacialEmotionPage {
  }
 
 yesEmotion(){
+  if(this.foodEntry==null){
+    console.log("NO FOOD ENTRY");
     this.checkEmotion=false;
     this.preliminary=true;
     document.querySelector("#one").innerHTML="";
     document.querySelector("#two").innerHTML="Checking your fridge for food which corresponds with your emotions...";
-    this.angularFireAuth.authState.subscribe(res => {
-      if (res && res.uid) {
+    
         console.log("HERE AGAIN");
-        this.angularFireStore.firestore.doc('/users/'+res.uid).collection('fridge').get().then(docSnapshot => {
+        this.angularFireStore.firestore.doc('/users/'+this.userId).collection('fridge').get().then(docSnapshot => {
           if (docSnapshot) {
             console.log("USER: "+JSON.stringify(docSnapshot.docs.map(doc => doc.data())));
             this.getFoodForMood(docSnapshot.docs.map(doc => doc.data()));
           }
         });
-      } else {
-        this.navCtrl.push(SignUpLogInPage, {}).then(()=>{
-          const index = this.navCtrl.getActive().index;
-          this.navCtrl.remove(0, index);
-        });
+      
+  } else{
+    console.log("FOOD ENTRY");
+    this.foodEntry.finalEmotion=this.emotionId;
+    this.foodEntry.finalEmotionValue=this.emotionValue;
+    let foodEntries = this.angularFireStore.doc<any>('users/' + this.userId).collection('foodEntries');
+    foodEntries.doc(this.foodEntry.time).set(this.foodEntry).then((res)=>{
+       /*
+Happy: 0
+Sad: 1
+Angry: 2
+Disgusted: 3
+Scared: 4
+Stressed: 5
+Bored: 6
+Distressed: 7
+Less Happy: 8
+More Sad: 9
+More Angry: 10
+More Disgusted: 11
+More Scared: 12
+More Stressed: 13
+More Bored: 14
+More Distressed: 15*/
+      if(this.foodEntry.initialEmotion=="0"){
+        if(this.foodEntry.finalEmotion=="0" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0")
+        } else if(this.foodEntry.finalEmotion=="0" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "8")
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "9")
+        } else {
+          if(this.foodEntry.finalEmotion!=="0"){
+            this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString())
+          }
+        }
+      } else if(this.foodEntry.initialEmotion=="1"){
+        if(this.foodEntry.finalEmotion=="1" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "9")
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "8")
+        } else if(this.foodEntry.finalEmotion=="1" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "1")
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0")
+        } else {
+          if(this.foodEntry.finalEmotion!=="1"){
+            if(this.foodEntry.finalEmotion=="0"){
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "1");
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0");
+            } else{
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString());
+            }
+          }
+        }
+      } else if(this.foodEntry.initialEmotion=="2"){
+        if(this.foodEntry.finalEmotion=="2" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "10")
+        } else if(this.foodEntry.finalEmotion=="2" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "2")
+        } else {
+          if(this.foodEntry.finalEmotion!=="2"){
+            if(this.foodEntry.finalEmotion=="0"){
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "2");
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0");
+            } else{
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString());
+            }
+          }
+        }
+      } else if(this.foodEntry.initialEmotion=="3"){
+        if(this.foodEntry.finalEmotion=="3" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "11")
+        } else if(this.foodEntry.finalEmotion=="3" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "3")
+        } else {
+          if(this.foodEntry.finalEmotion!=="3"){
+            if(this.foodEntry.finalEmotion=="0"){
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "3");
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0");
+            } else{
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString());
+            }
+          }
+        }
+      } else if(this.foodEntry.initialEmotion=="4"){
+        if(this.foodEntry.finalEmotion=="4" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "12")
+        } else if(this.foodEntry.finalEmotion=="4" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "4")
+        } else {
+          if(this.foodEntry.finalEmotion!=="4"){
+            if(this.foodEntry.finalEmotion=="0"){
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "4");
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0");
+            } else{
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString());
+            }
+          }
+        }
+      } else if(this.foodEntry.initialEmotion=="5"){
+        if(this.foodEntry.finalEmotion=="5" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "13")
+        } else if(this.foodEntry.finalEmotion=="5" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "5")
+        } else {
+          if(this.foodEntry.finalEmotion!=="5"){
+            if(this.foodEntry.finalEmotion=="0"){
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "5");
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0");
+            } else{
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString());
+            }
+          }
+        }
+      } else if(this.foodEntry.initialEmotion=="6"){
+        if(this.foodEntry.finalEmotion=="6" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "14")
+        } else if(this.foodEntry.finalEmotion=="6" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "6")
+        } else {
+          if(this.foodEntry.finalEmotion!=="6"){
+            if(this.foodEntry.finalEmotion=="0"){
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "6");
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0");
+            } else{
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString());
+            }
+          }
+        }
+      } else if(this.foodEntry.initialEmotion=="7"){
+        if(this.foodEntry.finalEmotion=="7" && this.foodEntry.finalEmotionValue>=this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "15")
+        } else if(this.foodEntry.finalEmotion=="7" && this.foodEntry.finalEmotionValue<this.foodEntry.initialEmotionValue){
+          this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "7")
+        } else {
+          if(this.foodEntry.finalEmotion!=="7"){
+            if(this.foodEntry.finalEmotion=="0"){
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "7");
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, "0");
+            } else{
+              this.emotionNutrientRestService.learn(this.foodEntry.food.ingredientCode, (parseInt(this.foodEntry.finalEmotion)+8).toString());
+            }
+          }
+        }
       }
-    });
+      this.navCtrl.pop();
+    }); 
+  }
  }
 
  async getFoodForMood(fridge){

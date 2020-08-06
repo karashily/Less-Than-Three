@@ -19,9 +19,8 @@
   <ion-list>
     <ion-card class="myCard"> 
       <div style="background-color: #fc7a4a; text-align: center; color: white; padding: 10px; font-size: 17px;">Food in your fridge to help with this mood</div>
-      <ion-list style="height: 100px;">
-        <div>
-        </div>
+      <ion-list style="padding-bottom: 10px;">
+        <p *ngFor="let food of foodList" style="padding-top: 10px;padding-left: 10px;padding-right: 10px;">{{food}}</p>
       </ion-list>
     </ion-card>
     <ion-card class="myCard" style="margin-top: 20px;"> 
@@ -35,8 +34,8 @@
     <ion-card class="myCard" style="margin-top: 20px;"> 
       <div style="background-color: #ffbe73; text-align: center; color: white; padding: 10px; font-size: 17px;">Recommendations</div>
       <p style="margin: 10px;">When you visit your fridge when {{emotion | lowercase}}, you have taken: </p>
-      <ion-list>
-        <p *ngFor="let foodEntry of foodEntries">{{foodEntry.food.foodName}}</p>
+      <ion-list style="padding-bottom: 10px;">
+        <p *ngFor="let foodEntry of foodEntriesList" style="padding-top: 10px;padding-left: 10px;padding-right: 10px;">{{foodEntry}}</p>
       </ion-list>
     </ion-card>
   </ion-list>

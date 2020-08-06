@@ -37,6 +37,8 @@ import { File } from '@ionic-native/file/ngx';
 import { DailyNutrientServiceProvider } from '../providers/daily-nutrient-service/daily-nutrient-service';
 import { RecipeServiceProvider } from '../providers/recipe-service/recipe-service';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { AddFoodEntryPage } from '../pages/add-food-entry/add-food-entry';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 @NgModule({
   declarations: [
@@ -56,7 +58,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
     AddFoodToFridgePage,
     AddToGroceryListPage,
     OnboardingPage,
-    AddFridgeItemPage
+    AddFridgeItemPage,
+    AddFoodEntryPage
   ],
   imports: [
     BrowserModule,
@@ -84,7 +87,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
     AddFoodToFridgePage,
     AddToGroceryListPage,
     OnboardingPage,
-    AddFridgeItemPage
+    AddFridgeItemPage,
+    AddFoodEntryPage
   ],
   providers: [
     StatusBar,
@@ -98,7 +102,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
     DailyNutrientServiceProvider,
     File,
     RecipeServiceProvider,
-    InAppBrowser
+    InAppBrowser,
+    LocalNotifications
   ]
 })
 

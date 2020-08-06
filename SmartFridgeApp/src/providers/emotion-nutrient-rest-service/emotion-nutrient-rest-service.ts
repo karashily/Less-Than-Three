@@ -17,18 +17,18 @@ import { Emotion } from '../../objects/emotion';
 @Injectable()
 export class EmotionNutrientRestServiceProvider {
 
-  happyFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "11976", "11477", "1256"];
-  sadFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "11976", "11477", "1256"];
-  stressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200"];
-  distressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200"];
-  scaredFoodIDs: any=["11457", "11233", "12085", "1123", "9200"];
-  boredFoodIDs: any=["1116", "9040", "20036", "11507", "11080"];
-  angryFoodIDs: any=["9316", "12220", "12155","12695","12037"];
-  disgustedFoodIDs: any=["9316", "12220", "12155","12695","12037"];
+  happyFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "9040", "11477", "1256", "15077", "15127", "11233", "9050", "9302", "12061", "42240"];
+sadFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "9040", "11477", "1256", "15077", "15127", "11233", "9050", "9302", "12061", "42240"];
+  stressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200", "9050", "9302", "42240", "5018", "13020", "15167" , "12085", "11212"];
+  distressedFoodIDs: any=["11457", "11233", "12085", "1123", "9200", "9050", "9302", "42240", "5018", "13020", "15167" , "12085", "11212"];
+  scaredFoodIDs: any=["11457", "11233", "12085", "1123", "9200", "9050", "9302", "42240", "5018", "13020", "15167" , "12085", "11212"];
+  boredFoodIDs: any=["1116", "9040", "20036", "11507", "11080", "15077", "15127", "20137", "11457", "11233", "9004", "1123" ];
+  angryFoodIDs: any=["9316", "12220", "12155","12695","12037", "15077", "15127", "19905", "12061", "5314", "16090", "11212", "11124"];
+  disgustedFoodIDs: any=["9316", "12220", "12155","12695","12037", "15077", "15127", "19905", "12061", "5314", "16090", "11212", "11124"];
 
-  lessHappyFoodIDs: any=["9209","14130","18248","14179","14625","19088","1077","36014","21464","19047","43276","7057","7961","16123","10862","18155",
+  lessHappyFoodIDs: any=["9209","14130","18248","14179","14625","19088","1077","36014","21464","19047","7057","7961","16123","10862",
 "42236","19068","19069","19070","19142"];
-  moreSadFoodIDs: any=["9209","14130","18248","14179","14625","19088","1077","36014","21464","19047","43276","7057","7961","16123","10862","18155",
+  moreSadFoodIDs: any=["9209","14130","18248","14179","14625","19088","1077","36014","21464","19047","7057","7961","16123","10862",
   "42236","19068","19069","19070","19142"];
   moreStressedFoodIDs: any=["8510", "8546","19438", "19896", "19905", "19910", "19913", "19914","19917","19919","19921","19922","19923","28312","28313","42173",
   "100173","7005","7014","14179","14201","14202","14210","14552","21464","36014","7057","14174","21151","14021","18090","18095","18151","18248",
@@ -46,7 +46,8 @@ export class EmotionNutrientRestServiceProvider {
   moreDisgustedFoodIDs: any=["11529","11209","36014","21090","18090","18096","18155","18015","4610","21224","18248",
   "21464","25001","25026","25064","28303","19068","19069","19070","19142","19151","19293","42236","10862","42140"];
 
-  baseUrl:string = "http://karashily-4090a3de.localhost.run/";
+  //baseUrl:string = "http://karashily-4090a3de.localhost.run/";
+  baseUrl:string = "http://localhost:5000/";
   username: string="";
   uid: string="";
   fridge: any=[];
@@ -74,6 +75,43 @@ export class EmotionNutrientRestServiceProvider {
     }
   }
 
+  predictEmotionForSpecificFood(food){
+    if(this.username!=="" && this.uid!==""){
+                var fridgeFoodData = foodNutritionData.foodData.filter(obj => {
+                  return obj.Ingredient_Code === food.ingredientCode
+                })[0];
+                console.log("PREDICT EMOTION URL: "+this.baseUrl + 'predict_mood/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
+                +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
+                +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
+                +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
+                +"&magnesium="+fridgeFoodData["Magnesium"]+"&phosphorus="+fridgeFoodData["Phosphorus"]+"&potassium="+fridgeFoodData["Potassium"]
+                +"&sodium="+fridgeFoodData["Sodium"]+"&zinc="+fridgeFoodData["Zinc"]+"&copper="+fridgeFoodData["Copper"]
+                +"&selenium="+fridgeFoodData["Selenium"]+"&retinol="+fridgeFoodData["Retinol"]+"&vitA="+fridgeFoodData["Vitamin A"]
+                +"&betaCarotene="+fridgeFoodData["Beta Carotene"]+"&alphaCarotene="+fridgeFoodData["Alpha Carotene"]+"&vitE="+fridgeFoodData["Vitamin E"]
+                +"&vitD="+fridgeFoodData["Vitamin D"]+"&cryptoxanthin="+fridgeFoodData["Cryptoxanthin"]+"&Lycopene="+fridgeFoodData["Lycopene"]
+                +"&Lutein="+fridgeFoodData["Lutein"]+"&vitC="+fridgeFoodData["Vitamin C"]+"&thiamin="+fridgeFoodData["Thiamin"]
+                +"&riboflavin="+fridgeFoodData["Riboflavin"]+"&niacin="+fridgeFoodData["Niacin"]+"&vitB6="+fridgeFoodData["Vitamin B-6"]
+                +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
+                +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
+                +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"])
+
+                return this.http.get(this.baseUrl + 'predict_mood/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
+                +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
+                +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
+                +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
+                +"&magnesium="+fridgeFoodData["Magnesium"]+"&phosphorus="+fridgeFoodData["Phosphorus"]+"&potassium="+fridgeFoodData["Potassium"]
+                +"&sodium="+fridgeFoodData["Sodium"]+"&zinc="+fridgeFoodData["Zinc"]+"&copper="+fridgeFoodData["Copper"]
+                +"&selenium="+fridgeFoodData["Selenium"]+"&retinol="+fridgeFoodData["Retinol"]+"&vitA="+fridgeFoodData["Vitamin A"]
+                +"&betaCarotene="+fridgeFoodData["Beta Carotene"]+"&alphaCarotene="+fridgeFoodData["Alpha Carotene"]+"&vitE="+fridgeFoodData["Vitamin E"]
+                +"&vitD="+fridgeFoodData["Vitamin D"]+"&cryptoxanthin="+fridgeFoodData["Cryptoxanthin"]+"&Lycopene="+fridgeFoodData["Lycopene"]
+                +"&Lutein="+fridgeFoodData["Lutein"]+"&vitC="+fridgeFoodData["Vitamin C"]+"&thiamin="+fridgeFoodData["Thiamin"]
+                +"&riboflavin="+fridgeFoodData["Riboflavin"]+"&niacin="+fridgeFoodData["Niacin"]+"&vitB6="+fridgeFoodData["Vitamin B-6"]
+                +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
+                +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
+                +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"]);
+              }
+  }
+
   predictEmotions(): any{
     if(this.username!=="" && this.uid!==""){
           this.angularFireStore.firestore.doc('/users/'+this.uid).collection('fridge').get().then(docSnapshot => {
@@ -98,7 +136,7 @@ export class EmotionNutrientRestServiceProvider {
                 +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
                 +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"]).subscribe(
                   data => {
-                    console.log("PREDICT DATA: " +JSON.stringify(data));
+                    console.log("PREDICT DATA: " +fridgeItem["ingredientCode"]+" "+JSON.stringify(data));
                     this.emotionFoods.push(data["mood"]);
                   },
                   error=>{
@@ -133,21 +171,6 @@ export class EmotionNutrientRestServiceProvider {
       var fridgeFoodData = foodNutritionData.foodData.filter(obj => {
         return obj.Ingredient_Code === ingredientCode
       })[0];
-        console.log(this.baseUrl + 'learn_behavior/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
-        +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
-        +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
-        +"&sugars="+fridgeFoodData["Sugars"]+"&fiber="+fridgeFoodData["Fiber"]+"&calcium="+fridgeFoodData["Calcium"]+"&iron="+fridgeFoodData["Iron"]
-        +"&magnesium="+fridgeFoodData["Magnesium"]+"&phosphorus="+fridgeFoodData["Phosphorus"]+"&potassium="+fridgeFoodData["Potassium"]
-        +"&sodium="+fridgeFoodData["Sodium"]+"&zinc="+fridgeFoodData["Zinc"]+"&copper="+fridgeFoodData["Copper"]
-        +"&selenium="+fridgeFoodData["Selenium"]+"&retinol="+fridgeFoodData["Retinol"]+"&vitA="+fridgeFoodData["Vitamin A"]
-        +"&betaCarotene="+fridgeFoodData["Beta Carotene"]+"&alphaCarotene="+fridgeFoodData["Alpha Carotene"]+"&vitE="+fridgeFoodData["Vitamin E"]
-        +"&vitD="+fridgeFoodData["Vitamin D"]+"&cryptoxanthin="+fridgeFoodData["Cryptoxanthin"]+"&Lycopene="+fridgeFoodData["Lycopene"]
-        +"&Lutein="+fridgeFoodData["Lutein"]+"&vitC="+fridgeFoodData["Vitamin C"]+"&thiamin="+fridgeFoodData["Thiamin"]
-        +"&riboflavin="+fridgeFoodData["Riboflavin"]+"&niacin="+fridgeFoodData["Niacin"]+"&vitB6="+fridgeFoodData["Vitamin B-6"]
-        +"&folate="+fridgeFoodData["Folate"]+"&vitB12="+fridgeFoodData["Vitamin B-12"]+"&choline="+fridgeFoodData["Choline"]
-        +"&vitK="+fridgeFoodData["Vitamin K"]+"&folicAcid="+fridgeFoodData["Folic acid"]
-        +"&cholesterol="+fridgeFoodData["Cholesterol"]+"&fattyAcids="+fridgeFoodData["Fatty acids"]
-        +"&mood="+emotionId);
         return this.http.get(this.baseUrl + 'learn_behavior/'+this.username+"?protein="+fridgeFoodData["Protein"]+"&totalFat="+fridgeFoodData["Total Fat"]
         +"&carbohydrate="+fridgeFoodData["Carbohydrate"]+"&energy="+fridgeFoodData["Energy"]+"&alcohol="+fridgeFoodData["Alcohol"]
         +"&water="+fridgeFoodData["Water"]+"&caffeine="+fridgeFoodData["Caffeine"]+"&theobromine="+fridgeFoodData["Theobromine"]
@@ -190,82 +213,243 @@ More Distressed: 15*/
       console.log("INGREDIENT CODE: "+happyFood.ingredientCode);
       this.learn(happyFood.ingredientCode, "0").subscribe(
         data => {
-          console.log("DATA: " +JSON.stringify(data));
+          console.log("HAPPY FOOD TRAINED: " +JSON.stringify(data));
         },
         error=>{
-          console.log("ERROR: " +JSON.stringify(error));
+          console.log("HAPPY FOOD TRAINED ERROR: " +JSON.stringify(error));
         }
       );
     }
     for(let happyFood of this.happyFoodIDs){
-      this.learn(happyFood, "0");
+      this.learn(happyFood, "0").subscribe(
+        data => {
+          console.log("HAPPY FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("HAPPY FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let sadFood of user.sadFoods){
-      this.learn(sadFood.ingredientCode, "1");
+      this.learn(sadFood.ingredientCode, "1").subscribe(
+        data => {
+          console.log("SAD FOOD TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("SAD FOOD TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let sadFood of this.sadFoodIDs){
-      this.learn(sadFood, "1");
+      this.learn(sadFood, "1").subscribe(
+        data => {
+          console.log("SAD FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("SAD FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let angryFood of user.angryFoods){
-      this.learn(angryFood.ingredientCode, "2");
+      this.learn(angryFood.ingredientCode, "2").subscribe(
+        data => {
+          console.log("ANGRY FOOD TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("ANGRY FOOD TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let angryFood of this.angryFoodIDs){
-      this.learn(angryFood, "2");
+      this.learn(angryFood, "2").subscribe(
+        data => {
+          console.log("ANGRY FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("ANGRY FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let disgustedFood of user.disgustedFoods){
-      this.learn(disgustedFood.ingredientCode, "3");
+      this.learn(disgustedFood.ingredientCode, "3").subscribe(
+        data => {
+          console.log("DISGUSTED FOOD TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("DISGUSTED FOOD TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let disgustedFood of this.disgustedFoodIDs){
-      this.learn(disgustedFood, "3");
+      this.learn(disgustedFood, "3").subscribe(
+        data => {
+          console.log("DISGUSTED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("DISGUSTED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let scaredFood of user.scaredFoods){
-      this.learn(scaredFood.ingredientCode, "4");
+      this.learn(scaredFood.ingredientCode, "4").subscribe(
+        data => {
+          console.log("SCARED FOOD TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("SCARED FOOD TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let scaredFood of this.scaredFoodIDs){
-      this.learn(scaredFood, "4");
+      this.learn(scaredFood, "4").subscribe(
+        data => {
+          console.log("SCARED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("SCARED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let stressedFood of user.stressedFoods){
-      this.learn(stressedFood.ingredientCode, "5");
+      this.learn(stressedFood.ingredientCode, "5").subscribe(
+        data => {
+          console.log("STRESSED FOOD TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("STRESSED FOOD TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let stressedFood of this.stressedFoodIDs){
-      this.learn(stressedFood, "5");
+      this.learn(stressedFood, "5").subscribe(
+        data => {
+          console.log("STRESSED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("STRESSED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let boredFood of user.boredFoods){
-      this.learn(boredFood.ingredientCode, "6");
+      this.learn(boredFood.ingredientCode, "6").subscribe(
+        data => {
+          console.log("BORED FOOD TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("BORED FOOD TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let boredFood of this.boredFoodIDs){
-      this.learn(boredFood, "6");
+      this.learn(boredFood, "6").subscribe(
+        data => {
+          console.log("BORED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("BORED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let distressedFood of user.distressedFoods){
-      this.learn(distressedFood.ingredientCode, "7");
+      this.learn(distressedFood.ingredientCode, "7").subscribe(
+        data => {
+          console.log("DISTRESSED FOOD TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("DISTRESSED FOOD TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     for(let distressedFood of this.distressedFoodIDs){
-      this.learn(distressedFood, "7");
+      this.learn(distressedFood, "7").subscribe(
+        data => {
+          console.log("DISTRESSED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("DISTRESSED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
 
-    for(let happyFood of this.lessHappyFoodIDs){
-      this.learn(happyFood, "8");
+    for(let lessHappyFood of this.lessHappyFoodIDs){
+      this.learn(lessHappyFood, "8").subscribe(
+        data => {
+          console.log("LESS HAPPY FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("LESS HAPPY FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
-    for(let sadFood of this.moreSadFoodIDs){
-      this.learn(sadFood, "9");
+    for(let moreSadFood of this.moreSadFoodIDs){
+      this.learn(moreSadFood, "9").subscribe(
+        data => {
+          console.log("MORE SAD FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("MORE SAD FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
-    for(let angryFood of this.moreAngryFoodIDs){
-      this.learn(angryFood, "10");
+    for(let moreAngryFood of this.moreAngryFoodIDs){
+      this.learn(moreAngryFood, "10").subscribe(
+        data => {
+          console.log("MORE ANGRY FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("MORE ANGRY FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
-    for(let disgustedFood of this.moreDisgustedFoodIDs){
-      this.learn(disgustedFood, "11");
+    for(let moreDisgustedFood of this.moreDisgustedFoodIDs){
+      this.learn(moreDisgustedFood, "11").subscribe(
+        data => {
+          console.log("MORE DISGUSTED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("MORE DISGUSTED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
-    for(let scaredFood of this.moreScaredFoodIDs){
-      this.learn(scaredFood, "12");
+    for(let moreScaredFood of this.moreScaredFoodIDs){
+      this.learn(moreScaredFood, "12").subscribe(
+        data => {
+          console.log("MORE SCARED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("MORE SCARED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
-    for(let stressedFood of this.moreStressedFoodIDs){
-      this.learn(stressedFood, "13");
+    for(let moreStressedFood of this.moreStressedFoodIDs){
+      this.learn(moreStressedFood, "13").subscribe(
+        data => {
+          console.log("MORE STRESSED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("MORE STRESSED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
-    for(let boredFood of this.moreBoredFoodIDs){
-      this.learn(boredFood, "14");
+    for(let moreBoredFood of this.moreBoredFoodIDs){
+      this.learn(moreBoredFood, "14").subscribe(
+        data => {
+          console.log("MORE BORED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("MORE BORED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
-    for(let distressedFood of this.moreDistressedFoodIDs){
-      this.learn(distressedFood, "15");
+    for(let moreDistressedFood of this.moreDistressedFoodIDs){
+      this.learn(moreDistressedFood, "15").subscribe(
+        data => {
+          console.log("MORE DISTRESSED FOOD IDS TRAINED: " +JSON.stringify(data));
+        },
+        error=>{
+          console.log("MORE DISTRESSED FOOD IDS TRAINED ERROR: " +JSON.stringify(error));
+        }
+      );
     }
     console.log("done");
     return user;

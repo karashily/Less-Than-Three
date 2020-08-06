@@ -4,6 +4,8 @@ import { Emotion } from "./emotion";
 export interface FoodEntry {
     food: Food;
     time: string;
-    initialEmotion: Emotion;
-    finalEmotion: Emotion;
+    initialEmotion: string;
+    finalEmotion: string;
+    initialEmotionValue: string;
+    finalEmotionValue: string;
  }

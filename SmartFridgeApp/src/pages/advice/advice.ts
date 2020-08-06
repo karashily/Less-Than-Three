@@ -7,6 +7,7 @@ import { RecipeServiceProvider } from '../../providers/recipe-service/recipe-ser
 import { EmotionNutrientRestServiceProvider } from '../../providers/emotion-nutrient-rest-service/emotion-nutrient-rest-service';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore } from 'angularfire2/firestore';
+import { AddFoodEntryPage } from '../add-food-entry/add-food-entry';
 
 /**
  * Generated class for the AdvicePage page.
@@ -33,6 +34,26 @@ export class AdvicePage {
   
   ionViewDidLoad() {
     console.log('ionViewDidLoad AdvicePage');
+
+    /*
+    this.angularFireAuth.authState.subscribe(res => {
+      if (res && res.uid) {
+        this.firestore.firestore.doc('/users/'+res.uid).get().then(docSnapshot => {
+          if (docSnapshot) {
+            let user=docSnapshot.data();
+            this.emotionNutrientRestService.initUser().subscribe(
+              data => {
+                this.emotionNutrientRestService.trainModelWhenOnboarding(user);
+              },
+              error => {
+                console.log(JSON.stringify(error));
+              }
+            );
+          }
+        });
+      }
+    });
+*/
   }
   
   launchFacialEmotionRecognition (event){
@@ -92,7 +113,7 @@ export class AdvicePage {
   }
 
   takeFoodOutOfFridge(){
-
+    this.navCtrl.push(AddFoodEntryPage, {});
   }
 
 }

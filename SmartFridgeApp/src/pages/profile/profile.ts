@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { SignUpLogInPage } from '../signuplogin/signuplogin';
 import { FirebaseAuthServiceProvider } from '../../providers/firebase-auth-service/firebase-auth-service';
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -22,10 +22,13 @@ export class ProfilePage {
   title: any;
   fullName: any; 
   emailAddress: any;
-  allergies: any;
+  allergies: any="";
   goal: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public firebaseAuthService: FirebaseAuthServiceProvider, public angularFireAuth: AngularFireAuth, public firestore: AngularFirestore) {
+  goals: any=["To have a healthier diet", "To lose weight", "To lose significant weight","To gain weight", "No goals"]
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public firebaseAuthService: FirebaseAuthServiceProvider, public angularFireAuth: AngularFireAuth, public firestore: AngularFirestore,
+    public alertCtrl: AlertController) {
   	this.title="Profile"
   }
 
@@ -39,7 +42,10 @@ export class ProfilePage {
             let data=docSnapshot.data();
             this.fullName=data.name;
             this.emailAddress=res.email;
-            this.goal=data.goal;
+            this.goal=this.goals[data.goal];
+            for(let allergy of data.allergies){
+              this.allergies+=allergy.foodName+" ";
+            }
           }
         });
       } else {
@@ -58,6 +64,15 @@ export class ProfilePage {
         this.navCtrl.remove(0, index);
       });
     });
+  }
+
+  credits(){
+    let alert = this.alertCtrl.create({
+      title: 'Credits',
+      subTitle: 'Food vectors created by freepik - https://www.freepik.com/vectors/food',
+      buttons: ['Dismiss']
+    });
+    alert.present();
   }
 
 }

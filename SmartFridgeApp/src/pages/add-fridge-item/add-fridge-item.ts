@@ -8,6 +8,8 @@ import 'firebase/storage';
 import firebase from 'firebase';
 import { foodNutritionData } from '../../data/foodNutritionData';
 import * as Clarifai from 'clarifai'
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFirestore } from 'angularfire2/firestore';
 
 @IonicPage()
 @Component({
@@ -21,15 +23,22 @@ export class AddFridgeItemPage {
   base64Image: string;
   initial: boolean=true;
   chooseFood: boolean=false;
+  next: boolean=false;
   recognizedFoods: any;
+  userId: any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public foodAiService: FoodAiServiceProvider,
-    public camera: Camera, public file: File) {
+    public camera: Camera, public file: File, public auth: AngularFireAuth, public firestore: AngularFirestore) {
          
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad AddFridgeItemPage');
+    this.auth.authState.subscribe(user => {
+      if (user) {
+        this.userId=user.uid;
+      }
+    });
   }
 
   takePhoto(){
@@ -59,6 +68,8 @@ export class AddFridgeItemPage {
   }
 
   upload() {
+    this.initial=false;
+    this.next=true;
     var a=this;
     let storageRef = firebase.storage().ref();
     // Create a timestamp as filename
@@ -81,11 +92,10 @@ export class AddFridgeItemPage {
             function(response) {
               console.log(JSON.stringify(response));
               let recognizedFood=response.outputs[0].data.concepts[0].name;
-              alert(recognizedFood);
-              a.initial=false;
+              a.next=false;
               a.chooseFood=true;
               a.recognizedFoods = foodNutritionData.foodData.filter(obj => {
-                return obj.Ingredient_Name.includes(recognizedFood) && !obj.Ingredient_Name.includes("Babyfood");
+                return obj.Ingredient_Name.toLowerCase().includes(recognizedFood.toLowerCase()) && !obj.Ingredient_Name.includes("Babyfood");
               })
             },
             function(err) {
@@ -98,5 +108,30 @@ export class AddFridgeItemPage {
   ionViewDidLeave(){
     this.camera.cleanup;
   }
+
+  selectFridgeItem(food){
+        let fridge = this.firestore.doc<any>('users/' + this.userId).collection('fridge');
+        this.firestore.firestore.doc('/users/'+this.userId+'/fridge/'+food.Ingredient_Code).get().then(docSnapshot => {
+          if (docSnapshot.exists) {
+            let data=docSnapshot.data();
+            let quantity=data.quantity+1;
+            fridge.doc(food.Ingredient_Code).set({
+              ingredientCode: food.Ingredient_Code,
+              foodName: food.Ingredient_Name,
+              quantity: quantity
+            }).then((res)=>{
+              this.navCtrl.pop();
+            }); 
+          } else {
+            fridge.doc(food.Ingredient_Code).set({
+              ingredientCode: food.Ingredient_Code,
+              foodName: food.Ingredient_Name,
+              quantity: 1
+            }).then((res)=>{
+              this.navCtrl.pop();
+            });
+          }
+        });
+      }
 
 }

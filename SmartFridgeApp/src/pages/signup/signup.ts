@@ -52,12 +52,9 @@ export class SignUpPage {
           let boredFoods: any=[];
           let distressedFoods: any=[];
           let contemptFoods: any=[];
-          var userData: User={
+          var userData={
             uid: "",
             name: this.name,
-            foodEntries: foodEntries,
-            fridge: fridge,
-            groceryList: groceryList,
             allergies: allergies,
             typeOfDiet: 2,
             goal: 0,
