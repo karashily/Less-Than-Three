@@ -6,6 +6,7 @@ import { SignUpLogInPage } from '../signuplogin/signuplogin';
 import { AddFoodToFridgePage } from '../add-food-to-fridge/add-food-to-fridge';
 import { AddToGroceryListPage } from '../add-to-grocery-list/add-to-grocery-list';
 import { foodNutritionData } from '../../data/foodNutritionData';
+import { FirebaseAuthServiceProvider } from '../../providers/firebase-auth-service/firebase-auth-service';
 ​
 /**
  * Generated class for the FridgePage page.
@@ -34,14 +35,18 @@ export class FridgePage {
 
   noGroceryList: boolean=false;
   noFridgeList: boolean=false;
+
+  uid: any;
 ​
-  constructor(public navCtrl: NavController, public navParams: NavParams, public angularFireStore: AngularFirestore, public angularFireAuth: AngularFireAuth, public alertController: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public angularFireStore: AngularFirestore, public angularFireAuth: AngularFireAuth, public alertController: AlertController,
+    public firebaseAuthService: FirebaseAuthServiceProvider) {
     this.title = "Fridge"
   }
 
   ionViewDidLoad(){
     this.angularFireAuth.authState.subscribe(res => {
       if (res && res.uid) {
+        this.uid=res.uid;
         this.firestoreFridgeList = this.angularFireStore.doc<any>('users/'+res.uid).collection('fridge').valueChanges();
         this.firestoreFridgeReferenceList=this.angularFireStore.doc<any>('users/'+res.uid).collection('fridge');
 
@@ -105,18 +110,11 @@ export class FridgePage {
     this.navCtrl.push(AddToGroceryListPage, {});
   }
 
-  getNutritionalData(food){
-    let foodObject=foodNutritionData.foodData.filter(obj => {
-      return obj.Ingredient_Code === food.ingredientCode
-    });
-    let text="Protein: ";
-    let alert = this.alertController.create({
-      title: 'Nutritional Data: '+food.foodName,
-      subTitle: text,
-      buttons: ['Dismiss']
-    });
-    alert.present();
+  deleteFridgeItem(food){
+    console.log("TO DELETE: "+`user/${this.uid}/fridge/${food.ingredientCode}`);
+    this.angularFireStore.firestore.doc(`users/${this.uid}/fridge/${food.ingredientCode}`).delete().catch(error=>{
+      console.log("DELETE ERROR: "+JSON.stringify(error));
+    })
   }
 
 }
-​

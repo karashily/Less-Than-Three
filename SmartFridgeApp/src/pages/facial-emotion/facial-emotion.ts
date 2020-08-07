@@ -55,6 +55,8 @@ sadFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "9040", "11477", "1
   preliminary: boolean=true;
   foodChoices: boolean=false;
 
+  noEmotionShow: boolean=false;
+
   userId: string;
 
   emotionId: string="-1";
@@ -216,6 +218,11 @@ sadFoodIDs: any=["19905", "12155", "20137", "9037", "11090", "9040", "11477", "1
  }
 
 yesEmotion(){
+  this.checkFoodForEmotion();
+ }
+
+ checkFoodForEmotion(){
+   this.noEmotionShow=false;
   if(this.foodEntry==null){
     console.log("NO FOOD ENTRY");
     this.checkEmotion=false;
@@ -390,14 +397,14 @@ More Distressed: 15*/
               console.log("FRIDGE FOODS: "+JSON.stringify(fridgeFoods));
               var index=0;
               for (let fridgeFood of fridgeFoods){
-                index++;
+                index=index+1;
                 if(fridgeFood.quantity>0){
                   this.emotionNutrientRestService.predictEmotionForSpecificFood(fridgeFood).subscribe(
                     result => {
                       console.log("PREDICT DATA: " +fridgeFood.ingredientCode+" "+JSON.stringify(result));
                       let data=result["mood"];
                       console.log("DATA FOOD: "+data);
-                      console.log(index);
+                      console.log("INDEX: "+index);
                       if(data==this.emotionId){
                         this.emotionFoods.push(fridgeFood);
                       }
@@ -501,7 +508,6 @@ More Distressed: 15*/
                   );
                 }
               }
-              console.log("HEREEE");
             }
           });
       },
@@ -516,7 +522,49 @@ More Distressed: 15*/
  }
 
   noEmotion(){
+    this.checkEmotion=false;
+    this.noEmotionShow=true;
+    document.querySelector("#one").innerHTML="What emotion are you feeling right now?";
+  }
 
+  happy(event){
+    this.emotionId="0"; 
+    this.checkFoodForEmotion();
+  }
+
+  sad(event){
+    this.emotionId="1"; 
+    this.checkFoodForEmotion();
+  }
+
+  angry(event){
+    this.emotionId="2"; 
+    this.checkFoodForEmotion();
+  }
+
+  disgusted(event){
+    this.emotionId="3"; 
+    this.checkFoodForEmotion();
+  }
+
+  scared(event){
+    this.emotionId="4"; 
+    this.checkFoodForEmotion();
+  }
+
+  stressed(event){
+    this.emotionId="5"; 
+    this.checkFoodForEmotion();
+  }
+
+  bored(event){
+    this.emotionId="6"; 
+    this.checkFoodForEmotion();
+  }
+
+  distressed(event){
+    this.emotionId="7"; 
+    this.checkFoodForEmotion();
   }
 
   getAllIndexes(arr, val) {

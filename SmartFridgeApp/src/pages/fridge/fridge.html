@@ -28,8 +28,9 @@
         <p style="display: inline-block; *display: inline; zoom: 1; color: white; font-size: 17px; position: relative; top: 10px; margin-left: 20px;">What's in my fridge?</p> 
       </div>
       <ion-list *ngIf="noFridgeList==true">
-        <ion-item *ngFor="let food of firestoreFridgeList | async" (click)="getNutritionalData(food)">
-            {{food.quantity}} {{food.foodName}}
+        <ion-item *ngFor="let food of firestoreFridgeList | async" style="position: relative; height: 45px; ">
+          <button item-right clear style="font-size:23px; display: inline-block; *display: inline; zoom: 1; position: absolute; right: 0px; margin-right: 10px; padding: 10px; background-color: transparent;" (click)='deleteFridgeItem(food)'><ion-icon name="close" color="black" ></ion-icon></button>
+          <p text-wrapstyle="color: black; font-size: 16px;display: inline;">{{food.quantity}} {{food.foodName}}</p>
         </ion-item>
       </ion-list>
       <p *ngIf="noFridgeList==false" style="margin-top: 10px; margin-left: 20px; margin-right: 20px; margin-bottom: 15px; font-size: 17px;">Add new items to your fridge!</p>
@@ -41,7 +42,7 @@
           <p style="display: inline-block; *display: inline; zoom: 1; color: white; font-size: 17px; position: relative; top: 10px; margin-left: 20px;">My Grocery List</p> 
         </div>
         <ion-list *ngIf="noGroceryList==true">
-          <ion-item *ngFor="let food of groceryList | async" (click)="getNutritionalData(food)">
+          <ion-item *ngFor="let food of groceryList | async">
               <p style="color: black; font-size: 16px;display: inline;">{{food.quantity}} {{food.foodName}}</p>
           </ion-item>
         </ion-list>
